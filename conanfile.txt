@@ -1,0 +1,14 @@
+[requires]
+boost_filesystem/1.65.1@bincrafters/stable
+qt/5.11.3@bincrafters/stable
+sfml/2.5.1@bincrafters/stable
+
+[options]
+
+[generators]
+cmake
+
+[imports]
+bin, *.pdb -> ./bin
+bin, *.dll -> ./bin
+plugins, *.dll -> ./bin
