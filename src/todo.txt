@@ -1,0 +1,10 @@
+Read rom + print instructions
+- Rom class that reads rom data into buffer
+- extract name,type
+- return instructions as buffer
+
+CPU
+- function pointers in map lookup
+- std bind to bind args so 1 add function can define many diff instructions
+- print string dissasembly first + add impl later
+- decode each instruction  + print out opcode + state
