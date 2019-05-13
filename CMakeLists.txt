@@ -17,7 +17,16 @@ find_package(Qt5Widgets REQUIRED)
 
 file(GLOB_RECURSE source_list RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
 file(GLOB_RECURSE headers_list RELATIVE ${CMAKE_SOURCE_DIR} "src/*.hpp")
+file(GLOB_RECURSE txt_list RELATIVE ${CMAKE_SOURCE_DIR} "src/*.txt")
 
+file(GLOB_RECURSE roms_list RELATIVE ${CMAKE_SOURCE_DIR} "roms/*.gb")
+
+file(MAKE_DIRECTORY "bin/roms")
+
+foreach(rom IN LISTS roms_list)
+    get_filename_component(source_path "${rom}" NAME)    
+    configure_file("${rom}" "bin/roms/${source_path}" COPYONLY)
+endforeach()
 
 foreach(source IN LISTS source_list)
     get_filename_component(source_path "${source}" PATH)
@@ -31,7 +40,13 @@ foreach(source IN LISTS headers_list)
     source_group("${source_path_msvc}" FILES "${source}")
 endforeach()
 
-add_executable(${PROJECT_NAME} ${source_list} ${headers_list})
+foreach(source IN LISTS txt_list)
+    get_filename_component(source_path "${source}" PATH)
+    string(REPLACE "/" "\\" source_path_msvc "${source_path}")
+    source_group("${source_path_msvc}" FILES "${source}")
+endforeach()
+
+add_executable(${PROJECT_NAME} ${source_list} ${headers_list} ${txt_list})
 target_include_directories(${PROJECT_NAME} PRIVATE "src")
 target_link_libraries(${PROJECT_NAME} ${CONAN_LIBS})
 target_link_libraries(${PROJECT_NAME} Qt5::Widgets)
