@@ -3,6 +3,8 @@
 #include <fstream>
 #include <map>
 
+#include <spdlog/spdlog.h>
+
 enum class RomDataOffset {
   NameStart = 0x134,
   NameEnd = 0x142,
@@ -16,6 +18,8 @@ enum class RomDataOffset {
 static std::map<unsigned int, Cart::RomType> s_romTypeLookup;
 
 Cart::Cart(std::string filename) {
+  spdlog::get("console")->info("Loading rom file: {}", filename);
+
   std::ifstream file(filename, std::ios::binary);
   file.seekg(0, std::ios::end);
   std::streampos fileSize = file.tellg();

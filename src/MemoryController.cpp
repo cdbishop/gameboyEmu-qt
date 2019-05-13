@@ -2,6 +2,10 @@
 
 MemoryController::MemoryController()
 {
+  _rom.resize(0x8000, 0);
+  _wram.resize(0x4000, 0);
+  _eram.resize(0x2000, 0);
+  _zram.resize(0x80, 0);
 }
 
 MemoryController::~MemoryController()
@@ -10,6 +14,41 @@ MemoryController::~MemoryController()
 
 void MemoryController::WriteByte(unsigned short address, unsigned char value)
 {
+  auto range = GetAddressRange(address);
+  switch (range) {
+    case AddressRange::ROM0:
+    case AddressRange::ROM1:
+      _rom[address] = value;
+      break;
+
+    case AddressRange::VRAM:
+      throw std::runtime_error("not implemented");
+      break;
+
+    case AddressRange::OAM:
+      throw std::runtime_error("not implemented");
+      break;
+
+    case AddressRange::IO:
+      throw std::runtime_error("not implemented");
+      break;
+
+    case AddressRange::ERAM:
+      _eram[address & 0x1FFF] = value;
+      break;
+
+    case AddressRange::WRAM:
+      _wram[address & 0x1FFF] = value;
+      break;
+
+    case AddressRange::ZRAM:
+      _wram[address & 0x7F] = value;
+      break;
+    
+    default:
+      throw std::runtime_error("Unhandled enum case");
+      break;
+  }
 }
 
 void MemoryController::WriteWord(unsigned short address, unsigned short value)

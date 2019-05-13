@@ -1,5 +1,6 @@
 #include "Load.hpp"
 #include "Cpu.hpp"
+#include "MemoryController.hpp"
 
 #include <stdexcept>
 
@@ -17,8 +18,10 @@ void Instructions::LoadImmediate16(Cpu * cpu, Register16 target)
   cpu->SetRegister(target, combined);
 }
 
-void Instructions::LoadFromAddress(Cpu * cpu, Register8 target, Register16 addressRegister)
+void Instructions::WriteToAddressAndDec(Cpu * cpu, Register8 src, Register16 targetAddressRegister)
 {
-  unsigned short address = cpu->GetRegister(addressRegister);
-
+  auto val = cpu->GetRegister(src);
+  auto addr = cpu->GetRegister(targetAddressRegister);
+  cpu->GetMemoryController()->WriteByte(addr, val);
+  cpu->DecRegister(src);
 }

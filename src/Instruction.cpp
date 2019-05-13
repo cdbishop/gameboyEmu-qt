@@ -1,7 +1,8 @@
 #include "Instruction.hpp"
 
-Instruction::Instruction(std::string instruction, unsigned int pcAdvance, int cycles, ExecuteFn impl, OpOrder opOrder)
+Instruction::Instruction(std::string instruction, int code, unsigned int pcAdvance, int cycles, ExecuteFn impl, OpOrder opOrder)
   :_asmInstruction(instruction),
+  _code(code),
   _pcAdvance(pcAdvance),
   _cycles(cycles),
   _implFn(impl),
