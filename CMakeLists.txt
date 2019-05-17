@@ -20,12 +20,19 @@ file(GLOB_RECURSE headers_list RELATIVE ${CMAKE_SOURCE_DIR} "src/*.hpp")
 file(GLOB_RECURSE txt_list RELATIVE ${CMAKE_SOURCE_DIR} "src/*.txt")
 
 file(GLOB_RECURSE roms_list RELATIVE ${CMAKE_SOURCE_DIR} "roms/*.gb")
+file(GLOB_RECURSE ui_list RELATIVE ${CMAKE_SOURCE_DIR} "ui/*.ui")
 
 file(MAKE_DIRECTORY "bin/roms")
+file(MAKE_DIRECTORY "bin/ui")
 
 foreach(rom IN LISTS roms_list)
     get_filename_component(source_path "${rom}" NAME)    
     configure_file("${rom}" "bin/roms/${source_path}" COPYONLY)
+endforeach()
+
+foreach(ui IN LISTS ui_list)
+    get_filename_component(source_path "${ui}" NAME)    
+    configure_file("${ui}" "bin/ui/${source_path}" COPYONLY)
 endforeach()
 
 foreach(source IN LISTS source_list)
