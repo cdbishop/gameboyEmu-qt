@@ -42,6 +42,8 @@ public:
   void SetFlag(Flag flag);
   bool TestFlag(Flag flag);
 
+  bool Running();
+
 private:
   void AdvanceState(const Instruction& instruction);
 

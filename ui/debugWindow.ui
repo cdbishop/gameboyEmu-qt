@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>832</width>
-    <height>600</height>
+    <height>589</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,7 +31,7 @@
            <x>0</x>
            <y>0</y>
            <width>401</width>
-           <height>541</height>
+           <height>501</height>
           </rect>
          </property>
          <property name="readOnly">
@@ -39,6 +39,32 @@
          </property>
          <property name="acceptRichText">
           <bool>false</bool>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="btn_Next">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>510</y>
+           <width>31</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>&gt;</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="btn_Run">
+         <property name="geometry">
+          <rect>
+           <x>40</x>
+           <y>510</y>
+           <width>31</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>&gt;&gt;</string>
          </property>
         </widget>
        </widget>
@@ -99,6 +125,190 @@
          </property>
          <property name="text">
           <string>B</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="lblRegC">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>80</y>
+           <width>16</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>C</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEditRegC">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>80</y>
+           <width>31</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEditRegD">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>110</y>
+           <width>31</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="lblRegD">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>110</y>
+           <width>16</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>D</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEditRegE">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>140</y>
+           <width>31</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="lblRegE">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>140</y>
+           <width>16</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>E</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEditRegH">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>170</y>
+           <width>31</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="lblRegH">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>170</y>
+           <width>16</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>H</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEditRegL">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>200</y>
+           <width>31</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="lblRegL">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>200</y>
+           <width>16</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>L</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEditRegFlag">
+         <property name="geometry">
+          <rect>
+           <x>110</x>
+           <y>20</y>
+           <width>31</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="lblRegFlag">
+         <property name="geometry">
+          <rect>
+           <x>80</x>
+           <y>20</y>
+           <width>31</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Flag</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="lblRegPC">
+         <property name="geometry">
+          <rect>
+           <x>180</x>
+           <y>20</y>
+           <width>31</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>PC</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEditRegPC">
+         <property name="geometry">
+          <rect>
+           <x>210</x>
+           <y>20</y>
+           <width>31</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="lblRegSP">
+         <property name="geometry">
+          <rect>
+           <x>180</x>
+           <y>60</y>
+           <width>31</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>SP</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEditRegSP">
+         <property name="geometry">
+          <rect>
+           <x>210</x>
+           <y>60</y>
+           <width>31</width>
+           <height>20</height>
+          </rect>
          </property>
         </widget>
        </widget>

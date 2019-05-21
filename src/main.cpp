@@ -12,8 +12,13 @@ int main(int argc, char** argv) {
   spdlog::set_level(spdlog::level::debug);
 
   QApplication app(argc, argv);
-  RenderWindow mw;
-  mw.show();
+  RenderWindow renderWindow;
+  renderWindow.show();
+
+  //QMainWindow* mainWin = new QMainWindow();
+  //DebugWindow debugWindow;
+  //debugWindow.setupUi(mainWin);
+  //mainWin->show();
 
   DebugWindow debugWindow;
   debugWindow.show();

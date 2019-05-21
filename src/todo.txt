@@ -8,3 +8,8 @@ CPU
 - std bind to bind args so 1 add function can define many diff instructions
 - print string dissasembly first + add impl later
 - decode each instruction  + print out opcode + state
+
+Debug
+- Hookup arrow buttons to run cpu
+- - '>' call step
+- - '>>' run indefinately

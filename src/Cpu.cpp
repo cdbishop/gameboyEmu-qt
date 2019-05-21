@@ -524,6 +524,12 @@ bool Cpu::TestFlag(Flag flag)
   }
 }
 
+bool Cpu::Running()
+{
+  //TODO: handle killing of cpu/rom
+  return true;
+}
+
 void Cpu::AdvanceState(const Instruction& instruction)
 {
   _pc += instruction.GetPCAdvance();

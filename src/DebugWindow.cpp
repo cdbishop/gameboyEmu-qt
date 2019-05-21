@@ -1,10 +1,20 @@
 #include "DebugWindow.hpp"
 
-DebugWindow::DebugWindow(QWidget* parent)
-  :QWidget(parent) {
+#include <QtUiTools/quiloader.h>
+#include <QtCore/qfile.h>
+
+#include <qboxlayout.h>
+#include <qpushbutton.h>
+
+#include "spdlog/spdlog.h"
+
+DebugWindow::DebugWindow(QWidget *parent)
+  :QMainWindow(parent)
+{
+  ui.setupUi(this);
+  connect(ui.btn_Next, &QPushButton::clicked, this, &DebugWindow::onNextBtnClicked);
 }
 
-
-DebugWindow::~DebugWindow()
-{
+void DebugWindow::onNextBtnClicked() {
+  spdlog::get("console")->debug("Next clicked!");
 }

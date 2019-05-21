@@ -10,7 +10,9 @@
 #include <memory>
 
 RenderWindow::RenderWindow(QWidget* parent)
-  :QWidget(parent) {
+  :QWidget(parent),
+   _cart(nullptr), 
+   _cpu(nullptr) {
   
   _canvasTest = new SFMLCanvasTest(this, QPoint(0, 0), QSize(360, 360));
   _canvasTest->show();
@@ -24,7 +26,6 @@ RenderWindow::RenderWindow(QWidget* parent)
   _fileMenu = new QMenuBar();
   auto file = new QMenu(tr("Open"));
 
-  //_fileMenu->addMenu("&File");
   _fileMenu->addMenu(file);
   file->addAction(_openAction);
 
@@ -38,12 +39,27 @@ RenderWindow::~RenderWindow()
 {
 }
 
+void RenderWindow::CpuStep()
+{
+  _cpu->Step();
+}
+
+void RenderWindow::CpuRun()
+{
+  while (_cpu->Running()) {
+    _cpu->Step();
+  }
+}
+
 void RenderWindow::OpenFile()
 {
-  std::shared_ptr<Cart> cart = std::make_shared<Cart>("roms\\tetris.gb");
-  Cpu cpu(cart);
+  /*std::shared_ptr<Cart> cart = std::make_shared<Cart>("roms\\tetris.gb");
+  Cpu cpu(cart);*/
 
-  while (true) {
-    cpu.Step();
-  }
+  //while (true) {
+  //  cpu.Step();
+  //}
+
+  _cart = std::make_shared<Cart>("roms\\tetris.gb");
+  _cpu = std::make_shared<Cpu>(_cart);
 }

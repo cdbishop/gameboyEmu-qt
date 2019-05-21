@@ -3,10 +3,17 @@
 #include <QtWidgets/qwidget.h>
 #include <QtWidgets/qmenu.h>
 
-class DebugWindow : public QWidget
+#include "ui/ui_debugWindow.h"
+
+class DebugWindow : public QMainWindow
 {
 public:
-  DebugWindow(QWidget* parent = 0);
-  ~DebugWindow();
+  DebugWindow(QWidget *parent = 0);
+
+private:
+  void onNextBtnClicked();
+
+private:
+  Ui::MainWindow ui;
 };
 
