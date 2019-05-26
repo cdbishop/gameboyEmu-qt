@@ -272,28 +272,19 @@ const std::map<unsigned char, Instruction> s_lookup = {
   { 0xff, Instruction("RST 38", 0xff, 1, 4, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
 };
 
-Cpu::Cpu(const std::shared_ptr<Cart> cart)
+Cpu::Cpu(const std::shared_ptr<Cart> cart, std::unique_ptr<CpuStateNotifier> notifier)
   :_cart(cart),
-   _a(0x01),
-   _b(0x00),
-   _c(0x13),
-   _d(0x00),
-   _e(0xd8),
-   _flag(0xb0),
-   _h(0x01),
-   _l(0x4d),
-   _pc(0x100),
-   _sp(0xfffe),
-   _numCycles(0),
-   _clock_m(0), 
-   _clock_t(0) {
+   _state(),
+   _clock(),
+  _stateNotifier(std::move(notifier)) {
 
   _memoryController = std::make_shared<MemoryController>();
+  _stateNotifier->NotifyState(_state);
 }
 
 void Cpu::Step()
 {
-  unsigned char code = _cart->ReadByte(_pc);
+  unsigned char code = _cart->ReadByte(_state._pc);
   const auto& instruction = s_lookup.at(code); 
 
   if (instruction.GetOpOrder() == Instruction::OpOrder::Pre) {
@@ -307,6 +298,9 @@ void Cpu::Step()
   if (instruction.GetOpOrder() == Instruction::OpOrder::Post) {
     AdvanceState(instruction);
   }
+
+  _state._history.push_back(instruction);
+  _stateNotifier->NotifyState(_state);
 }
 
 unsigned char Cpu::ReadByteOffset(unsigned int offset)
@@ -316,32 +310,32 @@ unsigned char Cpu::ReadByteOffset(unsigned int offset)
 
 void Cpu::SetPC(unsigned int address)
 {
-  _pc = address;
+  _state._pc = address;
 }
 
 unsigned char Cpu::GetRegister(Register8 reg)
 {
   switch(reg) {
     case Register8::A:
-      return _a;
+      return _state._a;
 
     case Register8::B:
-      return _b;
+      return _state._b;
 
     case Register8::C:
-      return _c;
+      return _state._c;
 
     case Register8::D:
-      return _d;
+      return _state._d;
 
     case Register8::E:
-      return _e;
+      return _state._e;
 
     case Register8::H:
-      return _h;
+      return _state._h;
 
     case Register8::L:
-      return _l;
+      return _state._l;
 
     default:
       throw std::runtime_error("unknown register");
@@ -352,31 +346,31 @@ void Cpu::SetRegister(Register8 reg, unsigned char value)
 {
   switch (reg) {
   case Register8::A:
-    _a = value;
+    _state._a = value;
     break;
 
   case Register8::B:
-    _b = value;
+    _state._b = value;
     break;
 
   case Register8::C:
-    _c = value;
+    _state._c = value;
     break;
 
   case Register8::D:
-    _d = value;
+    _state._d = value;
     break;
 
   case Register8::E:
-    _e = value;
+    _state._e = value;
     break;
 
   case Register8::H:
-    _h = value;
+    _state._h = value;
     break;
 
   case Register8::L:
-    _l = value;
+    _state._l = value;
     break;
 
   default:
@@ -388,19 +382,19 @@ unsigned short Cpu::GetRegister(Register16 reg)
 {
   switch (reg) {
     case Register16::BC:
-      return _b << 8 | _c;
+      return _state._b << 8 | _state._c;
       break;
 
     case Register16::DE:
-      return _d << 8 | _e;
+      return _state._d << 8 | _state._e;
       break;
 
     case Register16::HL:
-      return _h << 8 | _l;
+      return _state._h << 8 | _state._l;
       break;
 
     case Register16::SP:
-      return _sp;
+      return _state._sp;
       break;
 
     default:
@@ -415,22 +409,22 @@ void Cpu::SetRegister(Register16 reg, unsigned short value)
 
   switch (reg) {
   case Register16::BC:    
-    _b = hi;
-    _c = lo;
+    _state._b = hi;
+    _state._c = lo;
     break;
 
   case Register16::DE:
-    _d = hi;
-    _e = lo;
+    _state._d = hi;
+    _state._e = lo;
     break;
 
   case Register16::HL:
-    _h = hi;
-    _l = lo;
+    _state._h = hi;
+    _state._l = lo;
     break;
 
   case Register16::SP:
-    _sp = value;
+    _state._sp = value;
     break;
 
   default:
@@ -477,26 +471,26 @@ void Cpu::IncRegister(Register16 reg)
 
 void Cpu::ClearFlag()
 {
-  _flag = 0;
+  _state._flag = 0;
 }
 
 void Cpu::SetFlag(Flag flag)
 {
   switch (flag) {
     case Flag::Carry:
-      _flag |= 0x10;
+      _state._flag |= 0x10;
       break;
 
     case Flag::HalfCarry:
-      _flag |= 0x20;
+      _state._flag |= 0x20;
       break;
 
     case Flag::SubOp:
-      _flag |= 0x40;
+      _state._flag |= 0x40;
       break;
 
     case Flag::Zero:
-      _flag |= 0x80;
+      _state._flag |= 0x80;
       break;
 
     default:
@@ -508,16 +502,16 @@ bool Cpu::TestFlag(Flag flag)
 {
   switch (flag) {
     case Flag::Carry:
-      return (_flag & 0x10) == 0x10;
+      return (_state._flag & 0x10) == 0x10;
 
     case Flag::HalfCarry:
-      return (_flag & 0x20) == 0x20;
+      return (_state._flag & 0x20) == 0x20;
 
     case Flag::SubOp:
-      return (_flag & 0x40) == 0x40;
+      return (_state._flag & 0x40) == 0x40;
 
     case Flag::Zero:
-      return (_flag & 0x80) == 0x80;
+      return (_state._flag & 0x80) == 0x80;
 
     default:
       throw std::invalid_argument("unknown flag");
@@ -532,7 +526,7 @@ bool Cpu::Running()
 
 void Cpu::AdvanceState(const Instruction& instruction)
 {
-  _pc += instruction.GetPCAdvance();
+  _state._pc += instruction.GetPCAdvance();
   _numCycles += instruction.GetCycles() * 4;
-  _clock_m += instruction.GetCycles();
+  _clock._m += instruction.GetCycles();
 }

@@ -2,6 +2,8 @@
 #include "Cart.hpp"
 #include "Instruction.hpp"
 #include "Registers.hpp"
+#include "CpuState.hpp"
+#include "CpuStateNotifier.hpp"
 
 class MemoryController;
 
@@ -14,7 +16,14 @@ public:
     Carry
   };
 
-  Cpu(const std::shared_ptr<Cart> cart);
+  struct Clock {
+    unsigned int _m;
+    unsigned int _t;
+
+    Clock() :_m(0), _t(0) {}
+  };
+
+  Cpu(const std::shared_ptr<Cart> cart, std::unique_ptr<CpuStateNotifier> notifier);
 
   void Step();
 
@@ -50,22 +59,11 @@ private:
 private:
   std::shared_ptr<Cart> _cart;
   std::shared_ptr<MemoryController> _memoryController;
+  std::unique_ptr<CpuStateNotifier> _stateNotifier;
 
-  unsigned int _pc;
-  unsigned int _sp;
-
-  unsigned int _a;
-  unsigned int _b;
-  unsigned int _c;
-  unsigned int _d;
-  unsigned int _e;
-  unsigned int _h;
-  unsigned int _l;
-
-  unsigned int _flag;
+  cpu::State _state;
 
   unsigned int _numCycles;
 
-  unsigned int _clock_m;
-  unsigned int _clock_t;
+  Clock _clock;
 };

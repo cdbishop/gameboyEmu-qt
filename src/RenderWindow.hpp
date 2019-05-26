@@ -4,6 +4,7 @@
 #include <QtWidgets/qmenu.h>
 
 #include "SFMLCanvasTest.hpp"
+#include "CpuStateNotifierQt.hpp"
 
 class Cart;
 class Cpu;
@@ -11,7 +12,7 @@ class Cpu;
 class RenderWindow : public QWidget
 {
 public:
-  RenderWindow(QWidget* parent = 0);
+  RenderWindow(std::unique_ptr<CpuStateNotifierQt> notifier, QWidget* parent = 0);
   ~RenderWindow();
 
   void CpuStep();
@@ -28,5 +29,6 @@ private:
 
   std::shared_ptr<Cart> _cart;
   std::shared_ptr<Cpu> _cpu;
+  std::unique_ptr<CpuStateNotifierQt> _stateNotifier;
 };
 

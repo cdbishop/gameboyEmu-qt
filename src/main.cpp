@@ -11,8 +11,14 @@ int main(int argc, char** argv) {
   spdlog::stdout_color_mt("console");
   spdlog::set_level(spdlog::level::debug);
 
-  QApplication app(argc, argv);
-  RenderWindow renderWindow;
+  QApplication app(argc, argv);  
+
+  DebugWindow debugWindow(&app);
+  debugWindow.show();
+
+  std::unique_ptr<CpuStateNotifierQt> state = std::make_unique<CpuStateNotifierQt>(&debugWindow);
+
+  RenderWindow renderWindow(std::move(state));
   renderWindow.show();
 
   //QMainWindow* mainWin = new QMainWindow();
@@ -20,8 +26,7 @@ int main(int argc, char** argv) {
   //debugWindow.setupUi(mainWin);
   //mainWin->show();
 
-  DebugWindow debugWindow;
-  debugWindow.show();
+  
 
   return app.exec();
   

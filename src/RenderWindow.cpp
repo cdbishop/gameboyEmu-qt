@@ -9,10 +9,11 @@
 
 #include <memory>
 
-RenderWindow::RenderWindow(QWidget* parent)
+RenderWindow::RenderWindow(std::unique_ptr<CpuStateNotifierQt> notifier, QWidget* parent)
   :QWidget(parent),
    _cart(nullptr), 
-   _cpu(nullptr) {
+   _cpu(nullptr),
+  _stateNotifier(std::move(notifier)) {
   
   _canvasTest = new SFMLCanvasTest(this, QPoint(0, 0), QSize(360, 360));
   _canvasTest->show();
@@ -60,6 +61,7 @@ void RenderWindow::OpenFile()
   //  cpu.Step();
   //}
 
-  _cart = std::make_shared<Cart>("roms\\tetris.gb");
-  _cpu = std::make_shared<Cpu>(_cart);
+  _cart = std::make_shared<Cart>("roms\\tetris.gb");  
+  _cpu = std::make_shared<Cpu>(_cart, std::move(_stateNotifier));
+  _stateNotifier = nullptr;
 }

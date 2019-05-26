@@ -22,8 +22,7 @@ public:
 
   void Execute(Cpu*) const;
 
-  template<typename OStream>
-  friend OStream& operator<<(OStream& os, const Instruction& instruction)
+  friend std::ostream& operator<<(std::ostream& os, const Instruction& instruction)
   {
     return os << "[asm: " << instruction._asmInstruction << ", code: " << std::hex << instruction._code << "]";
   }
