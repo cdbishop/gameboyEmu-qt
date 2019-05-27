@@ -22,6 +22,8 @@ public:
 private slots:
   void OpenFile();
   void OnNext();
+  void OnSetPCBreak(unsigned int pcTarget);
+  void OnSetRegBreak(std::string regValue, unsigned int targetValue);
 
 private:
   SFMLCanvasTest* _canvasTest;

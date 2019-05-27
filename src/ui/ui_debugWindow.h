@@ -1,19 +1,21 @@
 /********************************************************************************
-** Form generated from reading UI file 'debugWindowlSCfsz.ui'
+** Form generated from reading UI file 'debugWindowPyeEzZ.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.11.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef DEBUGWINDOWLSCFSZ_H
-#define DEBUGWINDOWLSCFSZ_H
+#ifndef DEBUGWINDOWPYEEZZ_H
+#define DEBUGWINDOWPYEEZZ_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QListWidget>
@@ -21,6 +23,7 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
+#include <QtWidgets/QTableWidget>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -66,6 +69,14 @@ public:
     QGroupBox *groupBox_debugSection;
     QLabel *lbl_breakOnPC;
     QLineEdit *lineEdit_BreakPCValue;
+    QComboBox *cmbo_BreakRegSelect;
+    QLabel *lblBreakOnReg;
+    QLabel *lbl_BreakRegVal;
+    QLineEdit *lineEdit_BreakRegVal;
+    QPushButton *btn_AddPCBreak;
+    QPushButton *btn_AddRegBreak;
+    QPushButton *btn_RemoveBreak;
+    QTableWidget *tbl_Breaks;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -198,13 +209,61 @@ public:
         lineEditRegHL->setReadOnly(true);
         groupBox_debugSection = new QGroupBox(frame_2);
         groupBox_debugSection->setObjectName(QStringLiteral("groupBox_debugSection"));
-        groupBox_debugSection->setGeometry(QRect(10, 430, 381, 80));
+        groupBox_debugSection->setGeometry(QRect(10, 359, 381, 171));
         lbl_breakOnPC = new QLabel(groupBox_debugSection);
         lbl_breakOnPC->setObjectName(QStringLiteral("lbl_breakOnPC"));
-        lbl_breakOnPC->setGeometry(QRect(10, 30, 71, 16));
+        lbl_breakOnPC->setGeometry(QRect(10, 20, 71, 16));
         lineEdit_BreakPCValue = new QLineEdit(groupBox_debugSection);
         lineEdit_BreakPCValue->setObjectName(QStringLiteral("lineEdit_BreakPCValue"));
-        lineEdit_BreakPCValue->setGeometry(QRect(70, 30, 41, 20));
+        lineEdit_BreakPCValue->setGeometry(QRect(100, 20, 41, 20));
+        cmbo_BreakRegSelect = new QComboBox(groupBox_debugSection);
+        cmbo_BreakRegSelect->addItem(QString());
+        cmbo_BreakRegSelect->addItem(QString());
+        cmbo_BreakRegSelect->addItem(QString());
+        cmbo_BreakRegSelect->addItem(QString());
+        cmbo_BreakRegSelect->addItem(QString());
+        cmbo_BreakRegSelect->addItem(QString());
+        cmbo_BreakRegSelect->addItem(QString());
+        cmbo_BreakRegSelect->addItem(QString());
+        cmbo_BreakRegSelect->addItem(QString());
+        cmbo_BreakRegSelect->addItem(QString());
+        cmbo_BreakRegSelect->setObjectName(QStringLiteral("cmbo_BreakRegSelect"));
+        cmbo_BreakRegSelect->setGeometry(QRect(100, 40, 41, 22));
+        lblBreakOnReg = new QLabel(groupBox_debugSection);
+        lblBreakOnReg->setObjectName(QStringLiteral("lblBreakOnReg"));
+        lblBreakOnReg->setGeometry(QRect(10, 40, 91, 16));
+        lbl_BreakRegVal = new QLabel(groupBox_debugSection);
+        lbl_BreakRegVal->setObjectName(QStringLiteral("lbl_BreakRegVal"));
+        lbl_BreakRegVal->setGeometry(QRect(150, 41, 31, 16));
+        lineEdit_BreakRegVal = new QLineEdit(groupBox_debugSection);
+        lineEdit_BreakRegVal->setObjectName(QStringLiteral("lineEdit_BreakRegVal"));
+        lineEdit_BreakRegVal->setGeometry(QRect(180, 40, 41, 20));
+        btn_AddPCBreak = new QPushButton(groupBox_debugSection);
+        btn_AddPCBreak->setObjectName(QStringLiteral("btn_AddPCBreak"));
+        btn_AddPCBreak->setEnabled(false);
+        btn_AddPCBreak->setGeometry(QRect(230, 20, 41, 23));
+        btn_AddRegBreak = new QPushButton(groupBox_debugSection);
+        btn_AddRegBreak->setObjectName(QStringLiteral("btn_AddRegBreak"));
+        btn_AddRegBreak->setEnabled(false);
+        btn_AddRegBreak->setGeometry(QRect(230, 40, 41, 23));
+        btn_RemoveBreak = new QPushButton(groupBox_debugSection);
+        btn_RemoveBreak->setObjectName(QStringLiteral("btn_RemoveBreak"));
+        btn_RemoveBreak->setEnabled(false);
+        btn_RemoveBreak->setGeometry(QRect(324, 70, 51, 23));
+        tbl_Breaks = new QTableWidget(groupBox_debugSection);
+        if (tbl_Breaks->columnCount() < 2)
+            tbl_Breaks->setColumnCount(2);
+        QTableWidgetItem *__qtablewidgetitem = new QTableWidgetItem();
+        tbl_Breaks->setHorizontalHeaderItem(0, __qtablewidgetitem);
+        QTableWidgetItem *__qtablewidgetitem1 = new QTableWidgetItem();
+        tbl_Breaks->setHorizontalHeaderItem(1, __qtablewidgetitem1);
+        tbl_Breaks->setObjectName(QStringLiteral("tbl_Breaks"));
+        tbl_Breaks->setGeometry(QRect(10, 70, 311, 91));
+        tbl_Breaks->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        tbl_Breaks->setSelectionMode(QAbstractItemView::SingleSelection);
+        tbl_Breaks->setSelectionBehavior(QAbstractItemView::SelectRows);
+        tbl_Breaks->horizontalHeader()->setDefaultSectionSize(154);
+        tbl_Breaks->horizontalHeader()->setHighlightSections(true);
 
         horizontalLayout_2->addWidget(frame_2);
 
@@ -245,6 +304,26 @@ public:
         lblRegHL->setText(QApplication::translate("MainWindow", "HL", nullptr));
         groupBox_debugSection->setTitle(QApplication::translate("MainWindow", "Debug", nullptr));
         lbl_breakOnPC->setText(QApplication::translate("MainWindow", "Break on PC", nullptr));
+        cmbo_BreakRegSelect->setItemText(0, QApplication::translate("MainWindow", "A", nullptr));
+        cmbo_BreakRegSelect->setItemText(1, QApplication::translate("MainWindow", "B", nullptr));
+        cmbo_BreakRegSelect->setItemText(2, QApplication::translate("MainWindow", "C", nullptr));
+        cmbo_BreakRegSelect->setItemText(3, QApplication::translate("MainWindow", "D", nullptr));
+        cmbo_BreakRegSelect->setItemText(4, QApplication::translate("MainWindow", "E", nullptr));
+        cmbo_BreakRegSelect->setItemText(5, QApplication::translate("MainWindow", "H", nullptr));
+        cmbo_BreakRegSelect->setItemText(6, QApplication::translate("MainWindow", "L", nullptr));
+        cmbo_BreakRegSelect->setItemText(7, QApplication::translate("MainWindow", "BC", nullptr));
+        cmbo_BreakRegSelect->setItemText(8, QApplication::translate("MainWindow", "DE", nullptr));
+        cmbo_BreakRegSelect->setItemText(9, QApplication::translate("MainWindow", "HL", nullptr));
+
+        lblBreakOnReg->setText(QApplication::translate("MainWindow", "Break on Register", nullptr));
+        lbl_BreakRegVal->setText(QApplication::translate("MainWindow", "Value", nullptr));
+        btn_AddPCBreak->setText(QApplication::translate("MainWindow", "Add", nullptr));
+        btn_AddRegBreak->setText(QApplication::translate("MainWindow", "Add", nullptr));
+        btn_RemoveBreak->setText(QApplication::translate("MainWindow", "Remove", nullptr));
+        QTableWidgetItem *___qtablewidgetitem = tbl_Breaks->horizontalHeaderItem(0);
+        ___qtablewidgetitem->setText(QApplication::translate("MainWindow", "Reg", nullptr));
+        QTableWidgetItem *___qtablewidgetitem1 = tbl_Breaks->horizontalHeaderItem(1);
+        ___qtablewidgetitem1->setText(QApplication::translate("MainWindow", "Value", nullptr));
     } // retranslateUi
 
 };
@@ -255,4 +334,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // DEBUGWINDOWLSCFSZ_H
+#endif // DEBUGWINDOWPYEEZZ_H

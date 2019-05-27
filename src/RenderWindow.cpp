@@ -40,6 +40,9 @@ RenderWindow::RenderWindow(std::unique_ptr<CpuStateNotifierQt> notifier, DebugWi
   setLayout(layout);
 
   connect(_debugWindow, &DebugWindow::Next, this, &RenderWindow::OnNext);
+  connect(_debugWindow, &DebugWindow::Run, this, &RenderWindow::CpuRun);
+  connect(_debugWindow, &DebugWindow::SetPCBreak, this, &RenderWindow::OnSetPCBreak);
+  connect(_debugWindow, &DebugWindow::SetRegBreak, this, &RenderWindow::OnSetRegBreak);
 }
 
 RenderWindow::~RenderWindow()
@@ -62,6 +65,25 @@ void RenderWindow::OnNext()
 {
   spdlog::get("console")->debug("Recieved Next Signal from debug");
   CpuStep();
+}
+
+void RenderWindow::OnSetPCBreak(unsigned int pcTarget)
+{
+  spdlog::get("console")->debug("SetPCBreak signal: breaking on {}", pcTarget);
+  _cpu->SetPCDebug(pcTarget);
+}
+
+void RenderWindow::OnSetRegBreak(std::string regValue, unsigned int targetValue)
+{
+  if (regValue.length() == 1) {
+    Register8 reg = Register8FromString(regValue);
+    _cpu->SetRegisterDebug(reg, targetValue);
+  } else if (regValue.length() == 0) {
+    Register16 reg = Register16FromString(regValue);
+    _cpu->SetRegisterDebug(reg, targetValue);
+  } else {
+    throw std::invalid_argument("Unknown reg type");
+  }
 }
 
 void RenderWindow::OpenFile()

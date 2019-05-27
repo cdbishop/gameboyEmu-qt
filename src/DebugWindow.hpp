@@ -20,11 +20,17 @@ private:
   void onNextBtnClicked();
   void OnRunBtnClicked();
   void OnPCBreakEditingFinnished();
+  void OnRegBreakEditingFinnished();
+  void OnPCBreakAdd();
+  void OnRegBreakAdd();
+  void OnBreakSelected();
+  void OnBreakRemove();
 
 signals:
   void Next();
   void Run();
-  void SetPCBreak();
+  void SetPCBreak(unsigned int pcTarget);
+  void SetRegBreak(std::string reg, unsigned int value);
 
 private:
   Ui::MainWindow ui;

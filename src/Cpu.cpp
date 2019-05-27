@@ -12,6 +12,7 @@
 #include "spdlog/spdlog.h"
 
 #include <map>
+#include <crtdbg.h>
 
 const std::map<unsigned char, Instruction> s_lookup = {
   { 0x00, Instruction("noop", 0x00, 1, 0, &Instructions::NoOp) },
@@ -276,7 +277,8 @@ Cpu::Cpu(const std::shared_ptr<Cart> cart, std::unique_ptr<CpuStateNotifier> not
   :_cart(cart),
    _state(),
    _clock(),
-  _stateNotifier(std::move(notifier)) {
+  _stateNotifier(std::move(notifier)),
+  _running(true) {
 
   _memoryController = std::make_shared<MemoryController>();
   _stateNotifier->NotifyState(_state);
@@ -284,17 +286,27 @@ Cpu::Cpu(const std::shared_ptr<Cart> cart, std::unique_ptr<CpuStateNotifier> not
 
 void Cpu::Step()
 {
+  if (_debug.IsPCTargetReached(_state._pc)) {
+    _CrtDbgBreak();
+    _running = false;
+  }
+
+  if (_debug.TestRegBreakTargets(_state)) {
+    _CrtDbgBreak();
+    _running = false;
+  }
+
   unsigned char code = _cart->ReadByte(_state._pc);
   const auto& instruction = s_lookup.at(code); 
 
   if (instruction.GetOpOrder() == Instruction::OpOrder::Pre) {
     AdvanceState(instruction);
   }
-  
+ 
   spdlog::get("console")->debug("Processing instruction: {}", instruction);
 
   instruction.Execute(this);
-  
+ 
   if (instruction.GetOpOrder() == Instruction::OpOrder::Post) {
     AdvanceState(instruction);
   }
@@ -529,7 +541,22 @@ bool Cpu::TestFlag(Flag flag)
 bool Cpu::Running()
 {
   //TODO: handle killing of cpu/rom
-  return true;
+  return _running;
+}
+
+void Cpu::SetPCDebug(unsigned short pcTarget)
+{
+  _debug.SetPCTarget(pcTarget);
+}
+
+void Cpu::SetRegisterDebug(Register8 reg, unsigned char targetValue)
+{
+  _debug.SetRegTarget(reg, targetValue);
+}
+
+void Cpu::SetRegisterDebug(Register16 reg, unsigned short targetValue)
+{
+  _debug.SetRegTarget(reg, targetValue);
 }
 
 void Cpu::AdvanceState(const Instruction& instruction)

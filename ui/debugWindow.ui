@@ -417,9 +417,9 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>430</y>
+           <y>359</y>
            <width>381</width>
-           <height>80</height>
+           <height>171</height>
           </rect>
          </property>
          <property name="title">
@@ -429,7 +429,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>30</y>
+            <y>20</y>
             <width>71</width>
             <height>16</height>
            </rect>
@@ -441,12 +441,191 @@
          <widget class="QLineEdit" name="lineEdit_BreakPCValue">
           <property name="geometry">
            <rect>
-            <x>70</x>
-            <y>30</y>
+            <x>100</x>
+            <y>20</y>
             <width>41</width>
             <height>20</height>
            </rect>
           </property>
+         </widget>
+         <widget class="QComboBox" name="cmbo_BreakRegSelect">
+          <property name="geometry">
+           <rect>
+            <x>100</x>
+            <y>40</y>
+            <width>41</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <item>
+           <property name="text">
+            <string>A</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>B</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>C</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>D</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>E</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>H</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>L</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>BC</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>DE</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>HL</string>
+           </property>
+          </item>
+         </widget>
+         <widget class="QLabel" name="lblBreakOnReg">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>40</y>
+            <width>91</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Break on Register</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="lbl_BreakRegVal">
+          <property name="geometry">
+           <rect>
+            <x>150</x>
+            <y>41</y>
+            <width>31</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Value</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="lineEdit_BreakRegVal">
+          <property name="geometry">
+           <rect>
+            <x>180</x>
+            <y>40</y>
+            <width>41</width>
+            <height>20</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="btn_AddPCBreak">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="geometry">
+           <rect>
+            <x>230</x>
+            <y>20</y>
+            <width>41</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Add</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="btn_AddRegBreak">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="geometry">
+           <rect>
+            <x>230</x>
+            <y>40</y>
+            <width>41</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Add</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="btn_RemoveBreak">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="geometry">
+           <rect>
+            <x>324</x>
+            <y>70</y>
+            <width>51</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Remove</string>
+          </property>
+         </widget>
+         <widget class="QTableWidget" name="tbl_Breaks">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>70</y>
+            <width>311</width>
+            <height>91</height>
+           </rect>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>154</number>
+          </attribute>
+          <attribute name="horizontalHeaderHighlightSections">
+           <bool>true</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>Reg</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Value</string>
+           </property>
+          </column>
          </widget>
         </widget>
        </widget>

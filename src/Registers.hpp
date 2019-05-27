@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 enum class Register8 {
   A,
@@ -16,3 +17,7 @@ enum class Register16 {
   HL,
   SP
 };
+
+Register8 Register8FromString(const std::string& str);
+
+Register16 Register16FromString(const std::string& str);

@@ -4,6 +4,7 @@
 #include "Registers.hpp"
 #include "CpuState.hpp"
 #include "CpuStateNotifier.hpp"
+#include "CpuDebug.hpp"
 
 class MemoryController;
 
@@ -54,6 +55,10 @@ public:
 
   bool Running();
 
+  void SetPCDebug(unsigned short pcTarget);
+  void SetRegisterDebug(Register8 reg, unsigned char targetValue);
+  void SetRegisterDebug(Register16 reg, unsigned short targetValue);
+
 private:
   void AdvanceState(const Instruction& instruction);
 
@@ -67,4 +72,10 @@ private:
   unsigned int _numCycles;
 
   Clock _clock;
+
+  unsigned int _pcBreakTarget;
+
+  cpu::Debug _debug;
+
+  bool _running;
 };
