@@ -2,18 +2,22 @@
 
 #include "Cart.hpp"
 #include "Cpu.hpp"
+#include "DebugWindow.hpp"
 
 #include <qmenubar.h>
 #include <qmenu.h>
 #include <qboxlayout.h>
 
+#include "spdlog/spdlog.h"
+
 #include <memory>
 
-RenderWindow::RenderWindow(std::unique_ptr<CpuStateNotifierQt> notifier, QWidget* parent)
+RenderWindow::RenderWindow(std::unique_ptr<CpuStateNotifierQt> notifier, DebugWindow* debugWindow, QWidget* parent)
   :QWidget(parent),
    _cart(nullptr), 
    _cpu(nullptr),
-  _stateNotifier(std::move(notifier)) {
+  _stateNotifier(std::move(notifier)),
+  _debugWindow(debugWindow) {
   
   _canvasTest = new SFMLCanvasTest(this, QPoint(0, 0), QSize(360, 360));
   _canvasTest->show();
@@ -34,6 +38,8 @@ RenderWindow::RenderWindow(std::unique_ptr<CpuStateNotifierQt> notifier, QWidget
   layout->setMenuBar(_fileMenu);
 
   setLayout(layout);
+
+  connect(_debugWindow, &DebugWindow::Next, this, &RenderWindow::OnNext);
 }
 
 RenderWindow::~RenderWindow()
@@ -50,6 +56,12 @@ void RenderWindow::CpuRun()
   while (_cpu->Running()) {
     _cpu->Step();
   }
+}
+
+void RenderWindow::OnNext()
+{
+  spdlog::get("console")->debug("Recieved Next Signal from debug");
+  CpuStep();
 }
 
 void RenderWindow::OpenFile()

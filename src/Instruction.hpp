@@ -9,7 +9,8 @@ class Instruction {
 public:
   enum class OpOrder {
     Pre,
-    Post
+    Post,
+    None
   };
 
   typedef std::function<void(Cpu*)> ExecuteFn;

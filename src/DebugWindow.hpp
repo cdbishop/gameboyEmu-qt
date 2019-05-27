@@ -10,6 +10,7 @@
 
 class DebugWindow : public QMainWindow
 {
+  Q_OBJECT
 public:
   DebugWindow(QApplication* app, QWidget *parent = 0);
 
@@ -18,6 +19,12 @@ public:
 private:
   void onNextBtnClicked();
   void OnRunBtnClicked();
+  void OnPCBreakEditingFinnished();
+
+signals:
+  void Next();
+  void Run();
+  void SetPCBreak();
 
 private:
   Ui::MainWindow ui;

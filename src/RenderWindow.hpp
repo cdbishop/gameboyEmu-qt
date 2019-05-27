@@ -8,11 +8,12 @@
 
 class Cart;
 class Cpu;
+class DebugWindow;
 
 class RenderWindow : public QWidget
 {
 public:
-  RenderWindow(std::unique_ptr<CpuStateNotifierQt> notifier, QWidget* parent = 0);
+  RenderWindow(std::unique_ptr<CpuStateNotifierQt> notifier, DebugWindow* debugWindow, QWidget* parent = 0);
   ~RenderWindow();
 
   void CpuStep();
@@ -20,12 +21,15 @@ public:
 
 private slots:
   void OpenFile();
+  void OnNext();
 
 private:
   SFMLCanvasTest* _canvasTest;
   
   QMenuBar* _fileMenu;
   QAction* _openAction;
+
+  DebugWindow* _debugWindow;
 
   std::shared_ptr<Cart> _cart;
   std::shared_ptr<Cpu> _cpu;

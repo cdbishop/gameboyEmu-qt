@@ -23,5 +23,5 @@ void Instructions::WriteToAddressAndDec(Cpu * cpu, Register8 src, Register16 tar
   auto val = cpu->GetRegister(src);
   auto addr = cpu->GetRegister(targetAddressRegister);
   cpu->GetMemoryController()->WriteByte(addr, val);
-  cpu->DecRegister(src);
+  cpu->DecRegister(targetAddressRegister);
 }

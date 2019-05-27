@@ -1,25 +1,26 @@
 /********************************************************************************
-** Form generated from reading UI file 'debugWindowjyeZII.ui'
+** Form generated from reading UI file 'debugWindowlSCfsz.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.11.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef DEBUGWINDOWJYEZII_H
-#define DEBUGWINDOWJYEZII_H
+#ifndef DEBUGWINDOWLSCFSZ_H
+#define DEBUGWINDOWLSCFSZ_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QFrame>
+#include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
+#include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
-#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -31,9 +32,9 @@ public:
     QHBoxLayout *horizontalLayout_3;
     QHBoxLayout *horizontalLayout;
     QFrame *frame;
-    QTextEdit *textEdit;
     QPushButton *btn_Next;
     QPushButton *btn_Run;
+    QListWidget *lst_History;
     QHBoxLayout *horizontalLayout_2;
     QFrame *frame_2;
     QLabel *lblRegA;
@@ -56,6 +57,15 @@ public:
     QLineEdit *lineEditRegPC;
     QLabel *lblRegSP;
     QLineEdit *lineEditRegSP;
+    QLineEdit *lineEditRegBC;
+    QLabel *lblRegBC;
+    QLineEdit *lineEditRegDE;
+    QLabel *lblRegDE;
+    QLabel *lblRegHL;
+    QLineEdit *lineEditRegHL;
+    QGroupBox *groupBox_debugSection;
+    QLabel *lbl_breakOnPC;
+    QLineEdit *lineEdit_BreakPCValue;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -74,17 +84,15 @@ public:
         frame->setObjectName(QStringLiteral("frame"));
         frame->setFrameShape(QFrame::StyledPanel);
         frame->setFrameShadow(QFrame::Raised);
-        textEdit = new QTextEdit(frame);
-        textEdit->setObjectName(QStringLiteral("textEdit"));
-        textEdit->setGeometry(QRect(0, 0, 401, 501));
-        textEdit->setReadOnly(true);
-        textEdit->setAcceptRichText(false);
         btn_Next = new QPushButton(frame);
         btn_Next->setObjectName(QStringLiteral("btn_Next"));
         btn_Next->setGeometry(QRect(0, 510, 31, 23));
         btn_Run = new QPushButton(frame);
         btn_Run->setObjectName(QStringLiteral("btn_Run"));
         btn_Run->setGeometry(QRect(40, 510, 31, 23));
+        lst_History = new QListWidget(frame);
+        lst_History->setObjectName(QStringLiteral("lst_History"));
+        lst_History->setGeometry(QRect(0, 0, 401, 501));
 
         horizontalLayout->addWidget(frame);
 
@@ -103,9 +111,11 @@ public:
         lineEditRegA = new QLineEdit(frame_2);
         lineEditRegA->setObjectName(QStringLiteral("lineEditRegA"));
         lineEditRegA->setGeometry(QRect(20, 20, 31, 20));
+        lineEditRegA->setReadOnly(true);
         lineEditRegB = new QLineEdit(frame_2);
         lineEditRegB->setObjectName(QStringLiteral("lineEditRegB"));
         lineEditRegB->setGeometry(QRect(20, 50, 31, 20));
+        lineEditRegB->setReadOnly(true);
         lblRegB = new QLabel(frame_2);
         lblRegB->setObjectName(QStringLiteral("lblRegB"));
         lblRegB->setGeometry(QRect(10, 50, 16, 16));
@@ -115,48 +125,86 @@ public:
         lineEditRegC = new QLineEdit(frame_2);
         lineEditRegC->setObjectName(QStringLiteral("lineEditRegC"));
         lineEditRegC->setGeometry(QRect(20, 80, 31, 20));
+        lineEditRegC->setReadOnly(true);
         lineEditRegD = new QLineEdit(frame_2);
         lineEditRegD->setObjectName(QStringLiteral("lineEditRegD"));
         lineEditRegD->setGeometry(QRect(20, 110, 31, 20));
+        lineEditRegD->setReadOnly(true);
         lblRegD = new QLabel(frame_2);
         lblRegD->setObjectName(QStringLiteral("lblRegD"));
         lblRegD->setGeometry(QRect(10, 110, 16, 16));
         lineEditRegE = new QLineEdit(frame_2);
         lineEditRegE->setObjectName(QStringLiteral("lineEditRegE"));
         lineEditRegE->setGeometry(QRect(20, 140, 31, 20));
+        lineEditRegE->setReadOnly(true);
         lblRegE = new QLabel(frame_2);
         lblRegE->setObjectName(QStringLiteral("lblRegE"));
         lblRegE->setGeometry(QRect(10, 140, 16, 16));
         lineEditRegH = new QLineEdit(frame_2);
         lineEditRegH->setObjectName(QStringLiteral("lineEditRegH"));
         lineEditRegH->setGeometry(QRect(20, 170, 31, 20));
+        lineEditRegH->setReadOnly(true);
         lblRegH = new QLabel(frame_2);
         lblRegH->setObjectName(QStringLiteral("lblRegH"));
         lblRegH->setGeometry(QRect(10, 170, 16, 16));
         lineEditRegL = new QLineEdit(frame_2);
         lineEditRegL->setObjectName(QStringLiteral("lineEditRegL"));
         lineEditRegL->setGeometry(QRect(20, 200, 31, 20));
+        lineEditRegL->setReadOnly(true);
         lblRegL = new QLabel(frame_2);
         lblRegL->setObjectName(QStringLiteral("lblRegL"));
         lblRegL->setGeometry(QRect(10, 200, 16, 16));
         lineEditRegFlag = new QLineEdit(frame_2);
         lineEditRegFlag->setObjectName(QStringLiteral("lineEditRegFlag"));
         lineEditRegFlag->setGeometry(QRect(110, 20, 31, 20));
+        lineEditRegFlag->setReadOnly(true);
         lblRegFlag = new QLabel(frame_2);
         lblRegFlag->setObjectName(QStringLiteral("lblRegFlag"));
         lblRegFlag->setGeometry(QRect(80, 20, 31, 16));
         lblRegPC = new QLabel(frame_2);
         lblRegPC->setObjectName(QStringLiteral("lblRegPC"));
-        lblRegPC->setGeometry(QRect(180, 20, 31, 16));
+        lblRegPC->setGeometry(QRect(80, 50, 31, 16));
         lineEditRegPC = new QLineEdit(frame_2);
         lineEditRegPC->setObjectName(QStringLiteral("lineEditRegPC"));
-        lineEditRegPC->setGeometry(QRect(210, 20, 31, 20));
+        lineEditRegPC->setGeometry(QRect(110, 50, 41, 20));
+        lineEditRegPC->setReadOnly(true);
         lblRegSP = new QLabel(frame_2);
         lblRegSP->setObjectName(QStringLiteral("lblRegSP"));
-        lblRegSP->setGeometry(QRect(180, 60, 31, 16));
+        lblRegSP->setGeometry(QRect(80, 80, 31, 16));
         lineEditRegSP = new QLineEdit(frame_2);
         lineEditRegSP->setObjectName(QStringLiteral("lineEditRegSP"));
-        lineEditRegSP->setGeometry(QRect(210, 60, 31, 20));
+        lineEditRegSP->setGeometry(QRect(110, 80, 41, 20));
+        lineEditRegSP->setReadOnly(true);
+        lineEditRegBC = new QLineEdit(frame_2);
+        lineEditRegBC->setObjectName(QStringLiteral("lineEditRegBC"));
+        lineEditRegBC->setGeometry(QRect(220, 20, 41, 20));
+        lineEditRegBC->setReadOnly(true);
+        lblRegBC = new QLabel(frame_2);
+        lblRegBC->setObjectName(QStringLiteral("lblRegBC"));
+        lblRegBC->setGeometry(QRect(190, 20, 31, 16));
+        lineEditRegDE = new QLineEdit(frame_2);
+        lineEditRegDE->setObjectName(QStringLiteral("lineEditRegDE"));
+        lineEditRegDE->setGeometry(QRect(220, 50, 41, 20));
+        lineEditRegDE->setReadOnly(true);
+        lblRegDE = new QLabel(frame_2);
+        lblRegDE->setObjectName(QStringLiteral("lblRegDE"));
+        lblRegDE->setGeometry(QRect(190, 50, 31, 16));
+        lblRegHL = new QLabel(frame_2);
+        lblRegHL->setObjectName(QStringLiteral("lblRegHL"));
+        lblRegHL->setGeometry(QRect(190, 80, 31, 16));
+        lineEditRegHL = new QLineEdit(frame_2);
+        lineEditRegHL->setObjectName(QStringLiteral("lineEditRegHL"));
+        lineEditRegHL->setGeometry(QRect(220, 80, 41, 20));
+        lineEditRegHL->setReadOnly(true);
+        groupBox_debugSection = new QGroupBox(frame_2);
+        groupBox_debugSection->setObjectName(QStringLiteral("groupBox_debugSection"));
+        groupBox_debugSection->setGeometry(QRect(10, 430, 381, 80));
+        lbl_breakOnPC = new QLabel(groupBox_debugSection);
+        lbl_breakOnPC->setObjectName(QStringLiteral("lbl_breakOnPC"));
+        lbl_breakOnPC->setGeometry(QRect(10, 30, 71, 16));
+        lineEdit_BreakPCValue = new QLineEdit(groupBox_debugSection);
+        lineEdit_BreakPCValue->setObjectName(QStringLiteral("lineEdit_BreakPCValue"));
+        lineEdit_BreakPCValue->setGeometry(QRect(70, 30, 41, 20));
 
         horizontalLayout_2->addWidget(frame_2);
 
@@ -192,6 +240,11 @@ public:
         lblRegFlag->setText(QApplication::translate("MainWindow", "Flag", nullptr));
         lblRegPC->setText(QApplication::translate("MainWindow", "PC", nullptr));
         lblRegSP->setText(QApplication::translate("MainWindow", "SP", nullptr));
+        lblRegBC->setText(QApplication::translate("MainWindow", "BC", nullptr));
+        lblRegDE->setText(QApplication::translate("MainWindow", "DE", nullptr));
+        lblRegHL->setText(QApplication::translate("MainWindow", "HL", nullptr));
+        groupBox_debugSection->setTitle(QApplication::translate("MainWindow", "Debug", nullptr));
+        lbl_breakOnPC->setText(QApplication::translate("MainWindow", "Break on PC", nullptr));
     } // retranslateUi
 
 };
@@ -202,4 +255,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // DEBUGWINDOWJYEZII_H
+#endif // DEBUGWINDOWLSCFSZ_H

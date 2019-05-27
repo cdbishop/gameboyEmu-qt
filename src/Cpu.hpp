@@ -30,6 +30,7 @@ public:
   unsigned char ReadByteOffset(unsigned int offset);
 
   void SetPC(unsigned int address);
+  unsigned int GetPC() const;
 
   unsigned char GetRegister(Register8 reg);
   void SetRegister(Register8 reg, unsigned char);

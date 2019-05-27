@@ -38,7 +38,7 @@ const std::map<unsigned char, Instruction> s_lookup = {
   { 0x15, Instruction("dec D", 0x15, 1, 1, &Instructions::Placeholder) },
   { 0x16, Instruction("LD D {lower}", 0x16, 2, 2, std::bind(Instructions::LoadImmediate8, std::placeholders::_1, Register8::D)) },
   { 0x17, Instruction("RL A", 0x17, 1, 1, &Instructions::Placeholder) },
-  { 0x18, Instruction("JR n", 0x18, 2, 2, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
+  { 0x18, Instruction("JR n", 0x18, 2, 2, &Instructions::Placeholder, Instruction::OpOrder::None) },
   { 0x19, Instruction("ADD HE DE", 0x19, 1, 2, &Instructions::Placeholder) },
   { 0x1a, Instruction("LD A (DE)", 0x1a, 1, 2, &Instructions::Placeholder) },
   { 0x1b, Instruction("DEC DE", 0x1b, 1, 2, &Instructions::Placeholder) },
@@ -46,7 +46,7 @@ const std::map<unsigned char, Instruction> s_lookup = {
   { 0x1d, Instruction("DEC E", 0x1d, 1, 1, &Instructions::Placeholder) },
   { 0x1e, Instruction("LD E {lower}", 0x1e, 2, 2, std::bind(Instructions::LoadImmediate8, std::placeholders::_1, Register8::E)) },
   { 0x1f, Instruction("RR A", 0x1f, 1, 1, &Instructions::Placeholder) },
-  { 0x20, Instruction("JR NZ {lower}", 0x20, 2, 2, std::bind(Instructions::JmpRelative_NotZero, std::placeholders::_1), Instruction::OpOrder::Pre) },
+  { 0x20, Instruction("JR NZ {lower}", 0x20, 2, 2, std::bind(Instructions::JmpRelative_NotZero, std::placeholders::_1), Instruction::OpOrder::Post) },
   { 0x21, Instruction("LD HL {upper|lower}", 0x21, 3, 3, std::bind(Instructions::LoadImmediate16, std::placeholders::_1, Register16::HL)) },
   { 0x22, Instruction("LDI (HL) A", 0x22, 1, 2, &Instructions::Placeholder) },
   { 0x23, Instruction("INC HL", 0x23, 1, 2, &Instructions::Placeholder) },
@@ -209,7 +209,7 @@ const std::map<unsigned char, Instruction> s_lookup = {
   { 0xc0, Instruction("RET NZ", 0xc0, 1, 2, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
   { 0xc1, Instruction("POP BC", 0xc1, 1, 3, &Instructions::Placeholder) },
   { 0xc2, Instruction("JP NZ nn", 0xc2, 3, 3, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
-  { 0xc3, Instruction("JP nn", 0xc3, 3, 3,  &Instructions::Jmp_immediate, Instruction::OpOrder::Pre) },
+  { 0xc3, Instruction("JP nn", 0xc3, 3, 3,  &Instructions::Jmp_immediate, Instruction::OpOrder::None) },
   { 0xc4, Instruction("CALL NZ nn", 0xc4, 2, 2, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
   { 0xc5, Instruction("PUSH BC", 0xc5, 2, 2, &Instructions::Placeholder) },
   { 0xc6, Instruction("ADD A n", 0xc6, 2, 2, &Instructions::Placeholder) },
@@ -305,7 +305,7 @@ void Cpu::Step()
 
 unsigned char Cpu::ReadByteOffset(unsigned int offset)
 {
-  return _cart->ReadByte(offset);
+  return _cart->ReadByte(_state._pc + offset);
 }
 
 void Cpu::SetPC(unsigned int address)
@@ -313,33 +313,39 @@ void Cpu::SetPC(unsigned int address)
   _state._pc = address;
 }
 
+unsigned int Cpu::GetPC() const
+{
+  return _state._pc;
+}
+
 unsigned char Cpu::GetRegister(Register8 reg)
 {
-  switch(reg) {
-    case Register8::A:
-      return _state._a;
+  //switch(reg) {
+  //  case Register8::A:
+  //    return _state._a;
 
-    case Register8::B:
-      return _state._b;
+  //  case Register8::B:
+  //    return _state._b;
 
-    case Register8::C:
-      return _state._c;
+  //  case Register8::C:
+  //    return _state._c;
 
-    case Register8::D:
-      return _state._d;
+  //  case Register8::D:
+  //    return _state._d;
 
-    case Register8::E:
-      return _state._e;
+  //  case Register8::E:
+  //    return _state._e;
 
-    case Register8::H:
-      return _state._h;
+  //  case Register8::H:
+  //    return _state._h;
 
-    case Register8::L:
-      return _state._l;
+  //  case Register8::L:
+  //    return _state._l;
 
-    default:
-      throw std::runtime_error("unknown register");
-  }
+  //  default:
+  //    throw std::runtime_error("unknown register");
+  //}
+  return _state.ReadRegister(reg);
 }
 
 void Cpu::SetRegister(Register8 reg, unsigned char value)
@@ -380,7 +386,7 @@ void Cpu::SetRegister(Register8 reg, unsigned char value)
 
 unsigned short Cpu::GetRegister(Register16 reg)
 {
-  switch (reg) {
+  /*switch (reg) {
     case Register16::BC:
       return _state._b << 8 | _state._c;
       break;
@@ -399,7 +405,9 @@ unsigned short Cpu::GetRegister(Register16 reg)
 
     default:
       throw std::runtime_error("Unknown register");
-  }
+  }*/
+
+  return _state.ReadRegister(reg);
 }
 
 void Cpu::SetRegister(Register16 reg, unsigned short value)

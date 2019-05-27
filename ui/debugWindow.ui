@@ -25,22 +25,6 @@
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <widget class="QTextEdit" name="textEdit">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>401</width>
-           <height>501</height>
-          </rect>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-         <property name="acceptRichText">
-          <bool>false</bool>
-         </property>
-        </widget>
         <widget class="QPushButton" name="btn_Next">
          <property name="geometry">
           <rect>
@@ -65,6 +49,16 @@
          </property>
          <property name="text">
           <string>&gt;&gt;</string>
+         </property>
+        </widget>
+        <widget class="QListWidget" name="lst_History">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>401</width>
+           <height>501</height>
+          </rect>
          </property>
         </widget>
        </widget>
@@ -103,6 +97,9 @@
            <height>20</height>
           </rect>
          </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
         </widget>
         <widget class="QLineEdit" name="lineEditRegB">
          <property name="geometry">
@@ -112,6 +109,9 @@
            <width>31</width>
            <height>20</height>
           </rect>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
         </widget>
         <widget class="QLabel" name="lblRegB">
@@ -149,6 +149,9 @@
            <height>20</height>
           </rect>
          </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
         </widget>
         <widget class="QLineEdit" name="lineEditRegD">
          <property name="geometry">
@@ -158,6 +161,9 @@
            <width>31</width>
            <height>20</height>
           </rect>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
         </widget>
         <widget class="QLabel" name="lblRegD">
@@ -182,6 +188,9 @@
            <height>20</height>
           </rect>
          </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
         </widget>
         <widget class="QLabel" name="lblRegE">
          <property name="geometry">
@@ -204,6 +213,9 @@
            <width>31</width>
            <height>20</height>
           </rect>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
         </widget>
         <widget class="QLabel" name="lblRegH">
@@ -228,6 +240,9 @@
            <height>20</height>
           </rect>
          </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
         </widget>
         <widget class="QLabel" name="lblRegL">
          <property name="geometry">
@@ -251,6 +266,9 @@
            <height>20</height>
           </rect>
          </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
         </widget>
         <widget class="QLabel" name="lblRegFlag">
          <property name="geometry">
@@ -268,8 +286,8 @@
         <widget class="QLabel" name="lblRegPC">
          <property name="geometry">
           <rect>
-           <x>180</x>
-           <y>20</y>
+           <x>80</x>
+           <y>50</y>
            <width>31</width>
            <height>16</height>
           </rect>
@@ -281,18 +299,21 @@
         <widget class="QLineEdit" name="lineEditRegPC">
          <property name="geometry">
           <rect>
-           <x>210</x>
-           <y>20</y>
-           <width>31</width>
+           <x>110</x>
+           <y>50</y>
+           <width>41</width>
            <height>20</height>
           </rect>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
         </widget>
         <widget class="QLabel" name="lblRegSP">
          <property name="geometry">
           <rect>
-           <x>180</x>
-           <y>60</y>
+           <x>80</x>
+           <y>80</y>
            <width>31</width>
            <height>16</height>
           </rect>
@@ -304,12 +325,129 @@
         <widget class="QLineEdit" name="lineEditRegSP">
          <property name="geometry">
           <rect>
-           <x>210</x>
-           <y>60</y>
-           <width>31</width>
+           <x>110</x>
+           <y>80</y>
+           <width>41</width>
            <height>20</height>
           </rect>
          </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEditRegBC">
+         <property name="geometry">
+          <rect>
+           <x>220</x>
+           <y>20</y>
+           <width>41</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QLabel" name="lblRegBC">
+         <property name="geometry">
+          <rect>
+           <x>190</x>
+           <y>20</y>
+           <width>31</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>BC</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEditRegDE">
+         <property name="geometry">
+          <rect>
+           <x>220</x>
+           <y>50</y>
+           <width>41</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QLabel" name="lblRegDE">
+         <property name="geometry">
+          <rect>
+           <x>190</x>
+           <y>50</y>
+           <width>31</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>DE</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="lblRegHL">
+         <property name="geometry">
+          <rect>
+           <x>190</x>
+           <y>80</y>
+           <width>31</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>HL</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEditRegHL">
+         <property name="geometry">
+          <rect>
+           <x>220</x>
+           <y>80</y>
+           <width>41</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QGroupBox" name="groupBox_debugSection">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>430</y>
+           <width>381</width>
+           <height>80</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Debug</string>
+         </property>
+         <widget class="QLabel" name="lbl_breakOnPC">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>30</y>
+            <width>71</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Break on PC</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="lineEdit_BreakPCValue">
+          <property name="geometry">
+           <rect>
+            <x>70</x>
+            <y>30</y>
+            <width>41</width>
+            <height>20</height>
+           </rect>
+          </property>
+         </widget>
         </widget>
        </widget>
       </item>

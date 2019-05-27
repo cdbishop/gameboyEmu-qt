@@ -13,10 +13,10 @@ void Instructions::Jmp_immediate(Cpu * cpu)
 void Instructions::JmpRelative_NotZero(Cpu * cpu)
 {
   unsigned char upper = cpu->ReadByteOffset(1);
-  unsigned char lower = cpu->ReadByteOffset(2);
-  unsigned short combined = (unsigned short)lower << 8 | upper;
+  //unsigned char lower = cpu->ReadByteOffset(2);
+  //unsigned short combined = (unsigned short)lower << 8 | upper;
   if (!cpu->TestFlag(Cpu::Flag::Zero)) {
-    cpu->SetPC(combined);
+    cpu->SetPC(cpu->GetPC() + (char)upper);
   }
 }
 

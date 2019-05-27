@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
 
   std::unique_ptr<CpuStateNotifierQt> state = std::make_unique<CpuStateNotifierQt>(&debugWindow);
 
-  RenderWindow renderWindow(std::move(state));
+  RenderWindow renderWindow(std::move(state), &debugWindow);
   renderWindow.show();
 
   //QMainWindow* mainWin = new QMainWindow();
