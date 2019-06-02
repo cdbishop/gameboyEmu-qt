@@ -1,16 +1,17 @@
 /********************************************************************************
-** Form generated from reading UI file 'debugWindowPyeEzZ.ui'
+** Form generated from reading UI file 'debugWindowpDRNJI.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.11.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef DEBUGWINDOWPYEEZZ_H
-#define DEBUGWINDOWPYEEZZ_H
+#ifndef DEBUGWINDOWPDRNJI_H
+#define DEBUGWINDOWPDRNJI_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGroupBox>
@@ -38,6 +39,7 @@ public:
     QPushButton *btn_Next;
     QPushButton *btn_Run;
     QListWidget *lst_History;
+    QPushButton *btn_Pause;
     QHBoxLayout *horizontalLayout_2;
     QFrame *frame_2;
     QLabel *lblRegA;
@@ -77,6 +79,10 @@ public:
     QPushButton *btn_AddRegBreak;
     QPushButton *btn_RemoveBreak;
     QTableWidget *tbl_Breaks;
+    QCheckBox *chk_flagCarry;
+    QCheckBox *chk_flagHalfCarry;
+    QCheckBox *chk_flagSubOp;
+    QCheckBox *chk_flagZero;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -104,6 +110,9 @@ public:
         lst_History = new QListWidget(frame);
         lst_History->setObjectName(QStringLiteral("lst_History"));
         lst_History->setGeometry(QRect(0, 0, 401, 501));
+        btn_Pause = new QPushButton(frame);
+        btn_Pause->setObjectName(QStringLiteral("btn_Pause"));
+        btn_Pause->setGeometry(QRect(80, 510, 31, 23));
 
         horizontalLayout->addWidget(frame);
 
@@ -174,17 +183,17 @@ public:
         lblRegFlag->setGeometry(QRect(80, 20, 31, 16));
         lblRegPC = new QLabel(frame_2);
         lblRegPC->setObjectName(QStringLiteral("lblRegPC"));
-        lblRegPC->setGeometry(QRect(80, 50, 31, 16));
+        lblRegPC->setGeometry(QRect(190, 170, 31, 16));
         lineEditRegPC = new QLineEdit(frame_2);
         lineEditRegPC->setObjectName(QStringLiteral("lineEditRegPC"));
-        lineEditRegPC->setGeometry(QRect(110, 50, 41, 20));
+        lineEditRegPC->setGeometry(QRect(220, 170, 41, 20));
         lineEditRegPC->setReadOnly(true);
         lblRegSP = new QLabel(frame_2);
         lblRegSP->setObjectName(QStringLiteral("lblRegSP"));
-        lblRegSP->setGeometry(QRect(80, 80, 31, 16));
+        lblRegSP->setGeometry(QRect(190, 200, 31, 16));
         lineEditRegSP = new QLineEdit(frame_2);
         lineEditRegSP->setObjectName(QStringLiteral("lineEditRegSP"));
-        lineEditRegSP->setGeometry(QRect(110, 80, 41, 20));
+        lineEditRegSP->setGeometry(QRect(220, 200, 41, 20));
         lineEditRegSP->setReadOnly(true);
         lineEditRegBC = new QLineEdit(frame_2);
         lineEditRegBC->setObjectName(QStringLiteral("lineEditRegBC"));
@@ -264,6 +273,18 @@ public:
         tbl_Breaks->setSelectionBehavior(QAbstractItemView::SelectRows);
         tbl_Breaks->horizontalHeader()->setDefaultSectionSize(154);
         tbl_Breaks->horizontalHeader()->setHighlightSections(true);
+        chk_flagCarry = new QCheckBox(frame_2);
+        chk_flagCarry->setObjectName(QStringLiteral("chk_flagCarry"));
+        chk_flagCarry->setGeometry(QRect(90, 50, 70, 17));
+        chk_flagHalfCarry = new QCheckBox(frame_2);
+        chk_flagHalfCarry->setObjectName(QStringLiteral("chk_flagHalfCarry"));
+        chk_flagHalfCarry->setGeometry(QRect(90, 80, 70, 17));
+        chk_flagSubOp = new QCheckBox(frame_2);
+        chk_flagSubOp->setObjectName(QStringLiteral("chk_flagSubOp"));
+        chk_flagSubOp->setGeometry(QRect(90, 110, 70, 17));
+        chk_flagZero = new QCheckBox(frame_2);
+        chk_flagZero->setObjectName(QStringLiteral("chk_flagZero"));
+        chk_flagZero->setGeometry(QRect(90, 140, 70, 17));
 
         horizontalLayout_2->addWidget(frame_2);
 
@@ -289,6 +310,7 @@ public:
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", nullptr));
         btn_Next->setText(QApplication::translate("MainWindow", ">", nullptr));
         btn_Run->setText(QApplication::translate("MainWindow", ">>", nullptr));
+        btn_Pause->setText(QApplication::translate("MainWindow", "||", nullptr));
         lblRegA->setText(QApplication::translate("MainWindow", "A", nullptr));
         lblRegB->setText(QApplication::translate("MainWindow", "B", nullptr));
         lblRegC->setText(QApplication::translate("MainWindow", "C", nullptr));
@@ -324,6 +346,10 @@ public:
         ___qtablewidgetitem->setText(QApplication::translate("MainWindow", "Reg", nullptr));
         QTableWidgetItem *___qtablewidgetitem1 = tbl_Breaks->horizontalHeaderItem(1);
         ___qtablewidgetitem1->setText(QApplication::translate("MainWindow", "Value", nullptr));
+        chk_flagCarry->setText(QApplication::translate("MainWindow", "Carry", nullptr));
+        chk_flagHalfCarry->setText(QApplication::translate("MainWindow", "Half Carry", nullptr));
+        chk_flagSubOp->setText(QApplication::translate("MainWindow", "Sub", nullptr));
+        chk_flagZero->setText(QApplication::translate("MainWindow", "Zero", nullptr));
     } // retranslateUi
 
 };
@@ -334,4 +360,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // DEBUGWINDOWPYEEZZ_H
+#endif // DEBUGWINDOWPDRNJI_H

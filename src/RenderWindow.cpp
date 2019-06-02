@@ -43,6 +43,9 @@ RenderWindow::RenderWindow(std::unique_ptr<CpuStateNotifierQt> notifier, DebugWi
   connect(_debugWindow, &DebugWindow::Run, this, &RenderWindow::CpuRun);
   connect(_debugWindow, &DebugWindow::SetPCBreak, this, &RenderWindow::OnSetPCBreak);
   connect(_debugWindow, &DebugWindow::SetRegBreak, this, &RenderWindow::OnSetRegBreak);
+
+  connect(_debugWindow, &DebugWindow::RemovePCBreak, this, &RenderWindow::OnRemovePCBreak);
+  connect(_debugWindow, &DebugWindow::RemoveRegBreak, this, &RenderWindow::OnRemoveRegBreak);
 }
 
 RenderWindow::~RenderWindow()
@@ -56,9 +59,13 @@ void RenderWindow::CpuStep()
 
 void RenderWindow::CpuRun()
 {
-  while (_cpu->Running()) {
+  spdlog::get("console")->debug("Recieved Run signal");
+  _cpu->EnableStepping(false);
+  while (_cpu->Running() && !_cpu->Stepping()) {
     _cpu->Step();
   }
+
+  spdlog::get("console")->debug("Run break");
 }
 
 void RenderWindow::OnNext()
@@ -78,10 +85,33 @@ void RenderWindow::OnSetRegBreak(std::string regValue, unsigned int targetValue)
   if (regValue.length() == 1) {
     Register8 reg = Register8FromString(regValue);
     _cpu->SetRegisterDebug(reg, targetValue);
-  } else if (regValue.length() == 0) {
+  } else if (regValue.length() == 2) {
     Register16 reg = Register16FromString(regValue);
     _cpu->SetRegisterDebug(reg, targetValue);
   } else {
+    throw std::invalid_argument("Unknown reg type");
+  }
+}
+
+void RenderWindow::OnRemovePCBreak()
+{
+}
+
+void RenderWindow::OnRemoveRegBreak(std::string regValue)
+{
+  if (regValue.length() == 1) {
+    Register8 reg = Register8FromString(regValue);
+    _cpu->RemoveRegisterDebug(reg);
+  }
+  else if (regValue.length() == 2) {
+    if (regValue == "PC") {
+      _cpu->RemovePCDebug();
+    } else {
+      Register16 reg = Register16FromString(regValue);
+      _cpu->RemoveRegisterDebug(reg);
+    }
+  }
+  else {
     throw std::invalid_argument("Unknown reg type");
   }
 }

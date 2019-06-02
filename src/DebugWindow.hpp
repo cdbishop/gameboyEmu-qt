@@ -31,6 +31,8 @@ signals:
   void Run();
   void SetPCBreak(unsigned int pcTarget);
   void SetRegBreak(std::string reg, unsigned int value);
+  void RemoveRegBreak(std::string reg);
+  void RemovePCBreak();
 
 private:
   Ui::MainWindow ui;

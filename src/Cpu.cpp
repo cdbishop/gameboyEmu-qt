@@ -1,11 +1,15 @@
 #include "Cpu.hpp"
 
+#include "CpuState.hpp"
+
 #include "Instructions/Placeholder.hpp"
 #include "Instructions/Jump.hpp"
 #include "Instructions/NoOp.hpp"
 #include "Instructions/LogicalOp.hpp"
 #include "Instructions/Load.hpp"
 #include "Instructions/Register.hpp"
+#include "Instructions/Interrupts.hpp"
+#include "Instructions/Compare.hpp"
 
 #include "MemoryController.hpp"
 
@@ -239,7 +243,7 @@ const std::map<unsigned char, Instruction> s_lookup = {
   { 0xdd, Instruction("XX - not implemented", 0xdd, 1, 0, &Instructions::Placeholder) },
   { 0xde, Instruction("SBC A n", 0xde, 2, 2, &Instructions::Placeholder) },
   { 0xdf, Instruction("RST 18", 0xdf, 1, 4, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
-  { 0xe0, Instruction("LDH n A", 0xe0, 2, 3, &Instructions::Placeholder) },
+  { 0xe0, Instruction("LDH n A", 0xe0, 2, 3, std::bind(Instructions::WriteToAddressOffset, std::placeholders::_1, Register8::A, 0xFF00)) },
   { 0xe1, Instruction("POP HL", 0xe1, 1, 3, &Instructions::Placeholder) },
   { 0xe2, Instruction("LDH C A", 0xe2, 1, 2, &Instructions::Placeholder) },
   { 0xe3, Instruction("XX - not implemented", 0xe3, 1, 0, &Instructions::Placeholder) },
@@ -255,10 +259,10 @@ const std::map<unsigned char, Instruction> s_lookup = {
   { 0xed, Instruction("XX - not implemented", 0xed, 1, 0, &Instructions::Placeholder) },
   { 0xee, Instruction("XOR n", 0xee, 2, 2, &Instructions::Placeholder) },
   { 0xef, Instruction("RST 28", 0xef, 1, 4, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
-  { 0xf0, Instruction("LDH n A", 0xf0, 2, 3, &Instructions::Placeholder) },
+  { 0xf0, Instruction("LDH n A", 0xf0, 2, 3, std::bind(&Instructions::ReadFromAddressOffset, std::placeholders::_1, Register8::A, 0xFF00)) },
   { 0xf1, Instruction("POP AF", 0xf1, 1, 3, &Instructions::Placeholder) },
   { 0xf2, Instruction("XX - not implemented", 0xf2, 1, 0, &Instructions::Placeholder) },
-  { 0xf3, Instruction("DI", 0xf3, 1, 1, &Instructions::Placeholder) },
+  { 0xf3, Instruction("DI", 0xf3, 1, 1, &Instructions::DisableInterrupts) },
   { 0xf4, Instruction("XX - not implemented", 0xf4, 1, 0, &Instructions::Placeholder) },
   { 0xf5, Instruction("PUSH AF", 0xf5, 1, 4, &Instructions::Placeholder) },
   { 0xf6, Instruction("OR n", 0xf6, 2, 2, &Instructions::Placeholder) },
@@ -266,37 +270,36 @@ const std::map<unsigned char, Instruction> s_lookup = {
   { 0xf8, Instruction("LDHL SP d", 0xf8, 2, 3, &Instructions::Placeholder) },
   { 0xf9, Instruction("LD SP HL", 0xf9, 1, 2, &Instructions::Placeholder) },
   { 0xfa, Instruction("LD A (nn)", 0xfa, 3, 4, &Instructions::Placeholder) },
-  { 0xfb, Instruction("EI", 0xfb, 1, 1, &Instructions::Placeholder) },
+  { 0xfb, Instruction("EI", 0xfb, 1, 1, &Instructions::EnableInterrupts) },
   { 0xfc, Instruction("XX - not implemented", 0xfc, 1, 0, &Instructions::Placeholder) },
   { 0xfd, Instruction("XX - not implemented", 0xfd, 1, 0, &Instructions::Placeholder) },
-  { 0xfe, Instruction("CP A N", 0xfe, 2, 2, &Instructions::Placeholder) },
+  { 0xfe, Instruction("CP A N", 0xfe, 2, 2, std::bind(&Instructions::CompareRegisterImmediate, std::placeholders::_1, Register8::A)) },
   { 0xff, Instruction("RST 38", 0xff, 1, 4, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
 };
 
 Cpu::Cpu(const std::shared_ptr<Cart> cart, std::unique_ptr<CpuStateNotifier> notifier)
   :_cart(cart),
-   _state(),
+   _state(std::make_shared<cpu::State>()),
    _clock(),
   _stateNotifier(std::move(notifier)),
-  _running(true) {
+  _running(true),
+  _stepping(true) {
 
   _memoryController = std::make_shared<MemoryController>();
-  _stateNotifier->NotifyState(_state);
+  _stateNotifier->NotifyState(*_state);
 }
 
 void Cpu::Step()
 {
-  if (_debug.IsPCTargetReached(_state._pc)) {
-    _CrtDbgBreak();
-    _running = false;
+  if (_debug.IsPCTargetReached(_state->_pc)) {
+    _stepping = true;
   }
 
-  if (_debug.TestRegBreakTargets(_state)) {
-    _CrtDbgBreak();
-    _running = false;
+  if (_debug.TestRegBreakTargets(*_state)) {
+    _stepping = true;
   }
 
-  unsigned char code = _cart->ReadByte(_state._pc);
+  unsigned char code = _cart->ReadByte(_state->_pc);
   const auto& instruction = s_lookup.at(code); 
 
   if (instruction.GetOpOrder() == Instruction::OpOrder::Pre) {
@@ -311,84 +314,62 @@ void Cpu::Step()
     AdvanceState(instruction);
   }
 
-  _state._history.push_back(instruction);
-  _stateNotifier->NotifyState(_state);
+  _state->_history.push_back(instruction);
+
+  if (Stepping()) {
+    _stateNotifier->NotifyState(*_state);
+  }
 }
 
 unsigned char Cpu::ReadByteOffset(unsigned int offset)
 {
-  return _cart->ReadByte(_state._pc + offset);
+  return _cart->ReadByte(_state->_pc + offset);
 }
 
 void Cpu::SetPC(unsigned int address)
 {
-  _state._pc = address;
+  _state->_pc = address;
 }
 
 unsigned int Cpu::GetPC() const
 {
-  return _state._pc;
+  return _state->_pc;
 }
 
 unsigned char Cpu::GetRegister(Register8 reg)
 {
-  //switch(reg) {
-  //  case Register8::A:
-  //    return _state._a;
-
-  //  case Register8::B:
-  //    return _state._b;
-
-  //  case Register8::C:
-  //    return _state._c;
-
-  //  case Register8::D:
-  //    return _state._d;
-
-  //  case Register8::E:
-  //    return _state._e;
-
-  //  case Register8::H:
-  //    return _state._h;
-
-  //  case Register8::L:
-  //    return _state._l;
-
-  //  default:
-  //    throw std::runtime_error("unknown register");
-  //}
-  return _state.ReadRegister(reg);
+  return _state->ReadRegister(reg);
 }
 
 void Cpu::SetRegister(Register8 reg, unsigned char value)
 {
   switch (reg) {
   case Register8::A:
-    _state._a = value;
+    _state->_a = value;
     break;
 
   case Register8::B:
-    _state._b = value;
+    _state->_b = value;
     break;
 
   case Register8::C:
-    _state._c = value;
+    _state->_c = value;
     break;
 
   case Register8::D:
-    _state._d = value;
+    _state->_d = value;
     break;
 
   case Register8::E:
-    _state._e = value;
+    _state->_e = value;
     break;
 
   case Register8::H:
-    _state._h = value;
+    _state->_h = value;
     break;
 
   case Register8::L:
-    _state._l = value;
+    _state->_l = value;
     break;
 
   default:
@@ -398,28 +379,7 @@ void Cpu::SetRegister(Register8 reg, unsigned char value)
 
 unsigned short Cpu::GetRegister(Register16 reg)
 {
-  /*switch (reg) {
-    case Register16::BC:
-      return _state._b << 8 | _state._c;
-      break;
-
-    case Register16::DE:
-      return _state._d << 8 | _state._e;
-      break;
-
-    case Register16::HL:
-      return _state._h << 8 | _state._l;
-      break;
-
-    case Register16::SP:
-      return _state._sp;
-      break;
-
-    default:
-      throw std::runtime_error("Unknown register");
-  }*/
-
-  return _state.ReadRegister(reg);
+  return _state->ReadRegister(reg);
 }
 
 void Cpu::SetRegister(Register16 reg, unsigned short value)
@@ -429,22 +389,22 @@ void Cpu::SetRegister(Register16 reg, unsigned short value)
 
   switch (reg) {
   case Register16::BC:    
-    _state._b = hi;
-    _state._c = lo;
+    _state->_b = hi;
+    _state->_c = lo;
     break;
 
   case Register16::DE:
-    _state._d = hi;
-    _state._e = lo;
+    _state->_d = hi;
+    _state->_e = lo;
     break;
 
   case Register16::HL:
-    _state._h = hi;
-    _state._l = lo;
+    _state->_h = hi;
+    _state->_l = lo;
     break;
 
   case Register16::SP:
-    _state._sp = value;
+    _state->_sp = value;
     break;
 
   default:
@@ -458,7 +418,7 @@ void Cpu::DecRegister(Register8 reg)
   short original = (short)val;
   val -= 1;
 
-  ClearFlag();
+  ClearFlags();
   if (val == 0) {
     SetFlag(Flag::Zero);
   }
@@ -489,28 +449,28 @@ void Cpu::IncRegister(Register16 reg)
   SetRegister(reg, GetRegister(reg) + 1);
 }
 
-void Cpu::ClearFlag()
+void Cpu::ClearFlags()
 {
-  _state._flag = 0;
+  _state->_flag = 0;
 }
 
 void Cpu::SetFlag(Flag flag)
 {
   switch (flag) {
     case Flag::Carry:
-      _state._flag |= 0x10;
+      _state->_flag |= 0x10;
       break;
 
     case Flag::HalfCarry:
-      _state._flag |= 0x20;
+      _state->_flag |= 0x20;
       break;
 
     case Flag::SubOp:
-      _state._flag |= 0x40;
+      _state->_flag |= 0x40;
       break;
 
     case Flag::Zero:
-      _state._flag |= 0x80;
+      _state->_flag |= 0x80;
       break;
 
     default:
@@ -522,16 +482,40 @@ bool Cpu::TestFlag(Flag flag)
 {
   switch (flag) {
     case Flag::Carry:
-      return (_state._flag & 0x10) == 0x10;
+      return (_state->_flag & 0x10) == 0x10;
 
     case Flag::HalfCarry:
-      return (_state._flag & 0x20) == 0x20;
+      return (_state->_flag & 0x20) == 0x20;
 
     case Flag::SubOp:
-      return (_state._flag & 0x40) == 0x40;
+      return (_state->_flag & 0x40) == 0x40;
 
     case Flag::Zero:
-      return (_state._flag & 0x80) == 0x80;
+      return (_state->_flag & 0x80) == 0x80;
+
+    default:
+      throw std::invalid_argument("unknown flag");
+  }
+}
+
+void Cpu::ClearFlag(Flag flag)
+{
+  switch (flag) {
+    case Flag::Carry:
+      _state->_flag &= !0x10;
+      break;
+
+    case Flag::HalfCarry:
+      _state->_flag &= !0x20;
+      break;
+
+    case Flag::SubOp:
+      _state->_flag &= !0x40;
+      break;
+
+    case Flag::Zero:
+      _state->_flag &= !0x80;
+      break;
 
     default:
       throw std::invalid_argument("unknown flag");
@@ -542,6 +526,19 @@ bool Cpu::Running()
 {
   //TODO: handle killing of cpu/rom
   return _running;
+}
+
+bool Cpu::Stepping()
+{
+  return _stepping;
+}
+
+void Cpu::EnableStepping(bool enable)
+{
+  _stepping = enable;
+  if (!_stepping) {
+    _stateNotifier->NotifyState(*_state);
+  }
 }
 
 void Cpu::SetPCDebug(unsigned short pcTarget)
@@ -559,9 +556,34 @@ void Cpu::SetRegisterDebug(Register16 reg, unsigned short targetValue)
   _debug.SetRegTarget(reg, targetValue);
 }
 
+void Cpu::RemovePCDebug()
+{
+  _debug.ClearPCTarget();
+}
+
+void Cpu::RemoveRegisterDebug(Register8 reg)
+{
+  _debug.RemoveRegTarget(reg);
+}
+
+void Cpu::RemoveRegisterDebug(Register16 reg)
+{
+  _debug.RemoveRegTarget(reg);
+}
+
+void Cpu::EnableInterrupts()
+{
+  _state->EnabledInterrupts();
+}
+
+void Cpu::DisableInterrupts()
+{
+  _state->DisableInterrupts();
+}
+
 void Cpu::AdvanceState(const Instruction& instruction)
 {
-  _state._pc += instruction.GetPCAdvance();
+  _state->_pc += instruction.GetPCAdvance();
   _numCycles += instruction.GetCycles() * 4;
   _clock._m += instruction.GetCycles();
 }

@@ -1,4 +1,5 @@
 #include "CpuDebug.hpp"
+#include "CpuState.hpp"
 
 namespace cpu {
 
@@ -33,6 +34,16 @@ void Debug::SetRegTarget(Register8 reg, unsigned char target)
 void Debug::SetRegTarget(Register16 reg, unsigned short target)
 {
   _register16BreakTargets.insert(std::make_pair(reg, target));
+}
+
+void Debug::RemoveRegTarget(Register8 reg)
+{
+  _register8BreakTargets.erase(reg);
+}
+
+void Debug::RemoveRegTarget(Register16 reg)
+{
+  _register16BreakTargets.erase(reg);
 }
 
 bool Debug::TestRegBreakTargets(const cpu::State & state)

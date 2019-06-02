@@ -24,6 +24,8 @@ private slots:
   void OnNext();
   void OnSetPCBreak(unsigned int pcTarget);
   void OnSetRegBreak(std::string regValue, unsigned int targetValue);
+  void OnRemovePCBreak();
+  void OnRemoveRegBreak(std::string regValue);
 
 private:
   SFMLCanvasTest* _canvasTest;

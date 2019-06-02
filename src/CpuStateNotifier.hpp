@@ -1,6 +1,8 @@
 #pragma once
-#include "CpuState.hpp"
 
+namespace cpu {
+class State;
+}
 class CpuStateNotifier {
 public:
   CpuStateNotifier() { }

@@ -2,7 +2,6 @@
 #include "Cart.hpp"
 #include "Instruction.hpp"
 #include "Registers.hpp"
-#include "CpuState.hpp"
 #include "CpuStateNotifier.hpp"
 #include "CpuDebug.hpp"
 
@@ -49,15 +48,25 @@ public:
   void IncRegister(Register8 reg);
   void IncRegister(Register16 reg);
 
-  void ClearFlag();  
+  void ClearFlags();  
   void SetFlag(Flag flag);
   bool TestFlag(Flag flag);
+  void ClearFlag(Flag flag);
 
   bool Running();
+  bool Stepping();
+  void EnableStepping(bool enable);
 
   void SetPCDebug(unsigned short pcTarget);
   void SetRegisterDebug(Register8 reg, unsigned char targetValue);
   void SetRegisterDebug(Register16 reg, unsigned short targetValue);
+
+  void RemovePCDebug();
+  void RemoveRegisterDebug(Register8 reg);
+  void RemoveRegisterDebug(Register16 reg);
+
+  void EnableInterrupts();
+  void DisableInterrupts();
 
 private:
   void AdvanceState(const Instruction& instruction);
@@ -67,7 +76,7 @@ private:
   std::shared_ptr<MemoryController> _memoryController;
   std::unique_ptr<CpuStateNotifier> _stateNotifier;
 
-  cpu::State _state;
+  std::shared_ptr<cpu::State> _state;
 
   unsigned int _numCycles;
 
@@ -78,4 +87,5 @@ private:
   cpu::Debug _debug;
 
   bool _running;
+  bool _stepping;
 };

@@ -22,15 +22,15 @@ void MemoryController::WriteByte(unsigned short address, unsigned char value)
       break;
 
     case AddressRange::VRAM:
-      throw std::runtime_error("not implemented");
+      //throw std::runtime_error("not implemented");
       break;
 
     case AddressRange::OAM:
-      throw std::runtime_error("not implemented");
+      //throw std::runtime_error("not implemented");
       break;
 
     case AddressRange::IO:
-      throw std::runtime_error("not implemented");
+      //throw std::runtime_error("not implemented");
       break;
 
     case AddressRange::ERAM:

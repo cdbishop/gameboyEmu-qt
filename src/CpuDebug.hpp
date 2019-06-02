@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Registers.hpp"
-#include "CpuState.hpp"
 
 #include <map>
 
 namespace cpu {
+
+class State;
 
 class Debug final {
 public:
@@ -18,6 +19,9 @@ public:
 
   void SetRegTarget(Register8 reg, unsigned char target);
   void SetRegTarget(Register16 reg, unsigned short target);
+
+  void RemoveRegTarget(Register8 reg);
+  void RemoveRegTarget(Register16 reg);
 
   bool TestRegBreakTargets(const cpu::State& state);
 

@@ -5,9 +5,12 @@
 #include "DebugWindow.hpp"
 
 #include <spdlog/spdlog.h>
+#include <spdlog/async.h>
+#include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 int main(int argc, char** argv) {
+  spdlog::init_thread_pool(8192, 1);
   spdlog::stdout_color_mt("console");
   spdlog::set_level(spdlog::level::debug);
 

@@ -25,3 +25,19 @@ void Instructions::WriteToAddressAndDec(Cpu * cpu, Register8 src, Register16 tar
   cpu->GetMemoryController()->WriteByte(addr, val);
   cpu->DecRegister(targetAddressRegister);
 }
+
+void Instructions::WriteToAddressOffset(Cpu * cpu, Register8 src, uint16_t targetBaseAddress)
+{
+  auto val = cpu->GetRegister(src);
+  unsigned char immediate = cpu->ReadByteOffset(1);
+  unsigned short offset = targetBaseAddress + immediate;
+  cpu->GetMemoryController()->WriteByte(offset, val);
+}
+
+void Instructions::ReadFromAddressOffset(Cpu * cpu, Register8 src, uint16_t targetBaseAddress)
+{
+  unsigned char immediate = cpu->ReadByteOffset(1);
+  unsigned short offset = targetBaseAddress + immediate;
+  auto val = cpu->GetMemoryController()->ReadByte(offset);
+  cpu->SetRegister(src, val);
+}

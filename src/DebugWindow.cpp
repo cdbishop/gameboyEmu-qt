@@ -48,12 +48,11 @@ void DebugWindow::UpdateState(const cpu::State& state)
   ui.lineEditRegDE->setText(FormatValueHex(state.ReadRegister(Register16::DE)));
   ui.lineEditRegHL->setText(FormatValueHex(state.ReadRegister(Register16::HL)));
 
-  //ui.textEdit->clear();
-  //for (auto&& inst : state._history) {
-  //  std::ostringstream ss;
-  //  ss << inst;
-  //  ui.textEdit->append(QString(ss.str().c_str()));
-  //}
+  ui.chk_flagCarry->setChecked((state.TestFlag(Cpu::Flag::Carry)));
+  ui.chk_flagHalfCarry->setChecked((state.TestFlag(Cpu::Flag::HalfCarry)));
+  ui.chk_flagSubOp->setChecked((state.TestFlag(Cpu::Flag::SubOp)));
+  ui.chk_flagZero->setChecked((state.TestFlag(Cpu::Flag::Zero)));  
+  
   ui.lst_History->clear();
   for (auto&& inst : state._history) {
     std::ostringstream ss;
@@ -107,9 +106,16 @@ void DebugWindow::OnPCBreakAdd()
     spdlog::get("console")->debug("failed to parse input as hex: {}", txt.toStdString());
   }
 
+  QVariant regV("PC");
+  QTableWidgetItem* regItem = new QTableWidgetItem("PC");
+  regItem->setData(Qt::UserRole, regV);
+
+  QTableWidgetItem* regValue = new QTableWidgetItem(txt);
+  regValue->setData(Qt::UserRole, regV);
+
   ui.tbl_Breaks->insertRow(ui.tbl_Breaks->rowCount());
-  ui.tbl_Breaks->setItem(ui.tbl_Breaks->rowCount() - 1, 0, new QTableWidgetItem("PC"));
-  ui.tbl_Breaks->setItem(ui.tbl_Breaks->rowCount() - 1, 1, new QTableWidgetItem(txt));
+  ui.tbl_Breaks->setItem(ui.tbl_Breaks->rowCount() - 1, 0, regItem);
+  ui.tbl_Breaks->setItem(ui.tbl_Breaks->rowCount() - 1, 1, regValue);
 }
 
 void DebugWindow::OnRegBreakAdd()
@@ -126,9 +132,16 @@ void DebugWindow::OnRegBreakAdd()
     spdlog::get("console")->debug("failed to parse input as hex: {}", value.toStdString());
   }
 
+  QVariant regV(reg);
+  QTableWidgetItem* regItem = new QTableWidgetItem(reg);
+  regItem->setData(Qt::UserRole, regV);
+
+  QTableWidgetItem* regValue = new QTableWidgetItem(value);
+  regValue->setData(Qt::UserRole, regV);
+
   ui.tbl_Breaks->insertRow(ui.tbl_Breaks->rowCount());
-  ui.tbl_Breaks->setItem(ui.tbl_Breaks->rowCount() - 1, 0, new QTableWidgetItem(reg));
-  ui.tbl_Breaks->setItem(ui.tbl_Breaks->rowCount() - 1, 1, new QTableWidgetItem(value));
+  ui.tbl_Breaks->setItem(ui.tbl_Breaks->rowCount() - 1, 0, regItem);
+  ui.tbl_Breaks->setItem(ui.tbl_Breaks->rowCount() - 1, 1, regValue);
 }
 
 void DebugWindow::OnBreakSelected()
@@ -140,5 +153,9 @@ void DebugWindow::OnBreakSelected()
 void DebugWindow::OnBreakRemove()
 {
   auto item = ui.tbl_Breaks->currentItem();
-  ui.tbl_Breaks->removeRow(item->row());
+  QVariant v = item->data(Qt::UserRole);
+
+  ui.tbl_Breaks->removeRow(item->row());  
+
+  emit RemoveRegBreak(v.toString().toStdString());
 }
