@@ -1,8 +1,11 @@
 #include <QtWidgets/qapplication.h>
 #include <QtWidgets/qpushbutton.h>
 
+#include <memory>
+
 #include "RenderWindow.hpp"
 #include "DebugWindow.hpp"
+#include "CpuManager.hpp"
 
 #include <spdlog/spdlog.h>
 #include <spdlog/async.h>
@@ -15,22 +18,17 @@ int main(int argc, char** argv) {
   spdlog::set_level(spdlog::level::debug);
 
   QApplication app(argc, argv);  
-
+    
   DebugWindow debugWindow(&app);
   debugWindow.show();
 
   std::unique_ptr<CpuStateNotifierQt> state = std::make_unique<CpuStateNotifierQt>(&debugWindow);
 
-  RenderWindow renderWindow(std::move(state), &debugWindow);
+  std::shared_ptr<cpu::Manager> cpuManager = std::make_shared<cpu::Manager>(std::move(state));
+
+  RenderWindow renderWindow(cpuManager, &debugWindow);
   renderWindow.show();
-
-  //QMainWindow* mainWin = new QMainWindow();
-  //DebugWindow debugWindow;
-  //debugWindow.setupUi(mainWin);
-  //mainWin->show();
-
   
-
   return app.exec();
   
 }

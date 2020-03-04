@@ -17,7 +17,7 @@ enum class RomDataOffset {
 
 static std::map<unsigned int, Cart::RomType> s_romTypeLookup;
 
-Cart::Cart(std::string filename) {
+Cart::Cart(const std::string& filename) {
   spdlog::get("console")->info("Loading rom file: {}", filename);
 
   std::ifstream file(filename, std::ios::binary);

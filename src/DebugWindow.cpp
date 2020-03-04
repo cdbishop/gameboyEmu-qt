@@ -23,12 +23,14 @@ DebugWindow::DebugWindow(QApplication* app, QWidget *parent)
   ui.setupUi(this);
   connect(ui.btn_Next, &QPushButton::clicked, this, &DebugWindow::onNextBtnClicked);
   connect(ui.btn_Run, &QPushButton::clicked, this, &DebugWindow::OnRunBtnClicked);
+  connect(ui.btn_Pause, &QPushButton::clicked, this, &DebugWindow::OnPauseBtnClicked);
+
   connect(ui.lineEdit_BreakPCValue, &QLineEdit::editingFinished, this, &DebugWindow::OnPCBreakEditingFinnished);
   connect(ui.lineEdit_BreakRegVal, &QLineEdit::editingFinished, this, &DebugWindow::OnRegBreakEditingFinnished);
   connect(ui.btn_AddPCBreak, &QPushButton::clicked, this, &DebugWindow::OnPCBreakAdd);
   connect(ui.btn_AddRegBreak, &QPushButton::clicked, this, &DebugWindow::OnRegBreakAdd);
   connect(ui.tbl_Breaks, &QTableWidget::itemSelectionChanged, this, &DebugWindow::OnBreakSelected);
-  connect(ui.btn_RemoveBreak, &QPushButton::clicked, this, &DebugWindow::OnBreakRemove);
+  connect(ui.btn_RemoveBreak, &QPushButton::clicked, this, &DebugWindow::OnBreakRemove);  
 }
 
 void DebugWindow::UpdateState(const cpu::State& state)
@@ -71,6 +73,12 @@ void DebugWindow::OnRunBtnClicked()
 {
   spdlog::get("console")->debug("Run clicked!");
   emit Run();
+}
+
+void DebugWindow::OnPauseBtnClicked()
+{
+  spdlog::get("console")->debug("Pause clicked!");
+  emit Pause();
 }
 
 void DebugWindow::OnPCBreakEditingFinnished()

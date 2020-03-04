@@ -12,11 +12,9 @@
 
 #include <memory>
 
-RenderWindow::RenderWindow(std::unique_ptr<CpuStateNotifierQt> notifier, DebugWindow* debugWindow, QWidget* parent)
+RenderWindow::RenderWindow(std::shared_ptr<cpu::Manager> cpuManager, DebugWindow* debugWindow, QWidget* parent)
   :QWidget(parent),
-   _cart(nullptr), 
-   _cpu(nullptr),
-  _stateNotifier(std::move(notifier)),
+   _cpuManager(cpuManager),
   _debugWindow(debugWindow) {
   
   _canvasTest = new SFMLCanvasTest(this, QPoint(0, 0), QSize(360, 360));
@@ -41,6 +39,7 @@ RenderWindow::RenderWindow(std::unique_ptr<CpuStateNotifierQt> notifier, DebugWi
 
   connect(_debugWindow, &DebugWindow::Next, this, &RenderWindow::OnNext);
   connect(_debugWindow, &DebugWindow::Run, this, &RenderWindow::CpuRun);
+  connect(_debugWindow, &DebugWindow::Pause, this, &RenderWindow::CpuPause);
   connect(_debugWindow, &DebugWindow::SetPCBreak, this, &RenderWindow::OnSetPCBreak);
   connect(_debugWindow, &DebugWindow::SetRegBreak, this, &RenderWindow::OnSetRegBreak);
 
@@ -54,18 +53,17 @@ RenderWindow::~RenderWindow()
 
 void RenderWindow::CpuStep()
 {
-  _cpu->Step();
+  _cpuManager->Step();
 }
 
 void RenderWindow::CpuRun()
 {
-  spdlog::get("console")->debug("Recieved Run signal");
-  _cpu->EnableStepping(false);
-  while (_cpu->Running() && !_cpu->Stepping()) {
-    _cpu->Step();
-  }
+  _cpuManager->Run();
+}
 
-  spdlog::get("console")->debug("Run break");
+void RenderWindow::CpuPause()
+{
+  _cpuManager->Pause();
 }
 
 void RenderWindow::OnNext()
@@ -77,55 +75,25 @@ void RenderWindow::OnNext()
 void RenderWindow::OnSetPCBreak(unsigned int pcTarget)
 {
   spdlog::get("console")->debug("SetPCBreak signal: breaking on {}", pcTarget);
-  _cpu->SetPCDebug(pcTarget);
+  _cpuManager->SetPCBreak(pcTarget);
 }
 
-void RenderWindow::OnSetRegBreak(std::string regValue, unsigned int targetValue)
+void RenderWindow::OnSetRegBreak(const std::string& regValue, unsigned int targetValue)
 {
-  if (regValue.length() == 1) {
-    Register8 reg = Register8FromString(regValue);
-    _cpu->SetRegisterDebug(reg, targetValue);
-  } else if (regValue.length() == 2) {
-    Register16 reg = Register16FromString(regValue);
-    _cpu->SetRegisterDebug(reg, targetValue);
-  } else {
-    throw std::invalid_argument("Unknown reg type");
-  }
+  _cpuManager->SetRegBreak(regValue, targetValue);
 }
 
 void RenderWindow::OnRemovePCBreak()
 {
 }
 
-void RenderWindow::OnRemoveRegBreak(std::string regValue)
+void RenderWindow::OnRemoveRegBreak(const std::string& regValue)
 {
-  if (regValue.length() == 1) {
-    Register8 reg = Register8FromString(regValue);
-    _cpu->RemoveRegisterDebug(reg);
-  }
-  else if (regValue.length() == 2) {
-    if (regValue == "PC") {
-      _cpu->RemovePCDebug();
-    } else {
-      Register16 reg = Register16FromString(regValue);
-      _cpu->RemoveRegisterDebug(reg);
-    }
-  }
-  else {
-    throw std::invalid_argument("Unknown reg type");
-  }
+
+  _cpuManager->RemoveRegBreak(regValue);
 }
 
 void RenderWindow::OpenFile()
 {
-  /*std::shared_ptr<Cart> cart = std::make_shared<Cart>("roms\\tetris.gb");
-  Cpu cpu(cart);*/
-
-  //while (true) {
-  //  cpu.Step();
-  //}
-
-  _cart = std::make_shared<Cart>("roms\\tetris.gb");  
-  _cpu = std::make_shared<Cpu>(_cart, std::move(_stateNotifier));
-  _stateNotifier = nullptr;
+  _cpuManager->LoadFile("roms\\tetris.gb");
 }

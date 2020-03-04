@@ -38,7 +38,7 @@ public:
     Hudson_Huc_1
   };
 
-  Cart(std::string filename);
+  Cart(const std::string& filename);
 
   unsigned char ReadByte(unsigned short address);
 

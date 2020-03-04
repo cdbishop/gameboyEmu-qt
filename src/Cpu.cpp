@@ -277,7 +277,7 @@ const std::map<unsigned char, Instruction> s_lookup = {
   { 0xff, Instruction("RST 38", 0xff, 1, 4, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
 };
 
-Cpu::Cpu(const std::shared_ptr<Cart> cart, std::unique_ptr<CpuStateNotifier> notifier)
+Cpu::Cpu(const std::shared_ptr<Cart> cart, std::shared_ptr<CpuStateNotifier> notifier)
   :_cart(cart),
    _state(std::make_shared<cpu::State>()),
    _clock(),

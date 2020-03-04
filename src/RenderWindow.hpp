@@ -5,6 +5,7 @@
 
 #include "SFMLCanvasTest.hpp"
 #include "CpuStateNotifierQt.hpp"
+#include "CpuManager.hpp"
 
 class Cart;
 class Cpu;
@@ -13,19 +14,20 @@ class DebugWindow;
 class RenderWindow : public QWidget
 {
 public:
-  RenderWindow(std::unique_ptr<CpuStateNotifierQt> notifier, DebugWindow* debugWindow, QWidget* parent = 0);
+  RenderWindow(std::shared_ptr<cpu::Manager> cpuManager, DebugWindow* debugWindow, QWidget* parent = 0);
   ~RenderWindow();
 
   void CpuStep();
   void CpuRun();
+  void CpuPause();
 
 private slots:
   void OpenFile();
   void OnNext();
   void OnSetPCBreak(unsigned int pcTarget);
-  void OnSetRegBreak(std::string regValue, unsigned int targetValue);
+  void OnSetRegBreak(const std::string& regValue, unsigned int targetValue);
   void OnRemovePCBreak();
-  void OnRemoveRegBreak(std::string regValue);
+  void OnRemoveRegBreak(const std::string& regValue);
 
 private:
   SFMLCanvasTest* _canvasTest;
@@ -35,8 +37,7 @@ private:
 
   DebugWindow* _debugWindow;
 
-  std::shared_ptr<Cart> _cart;
-  std::shared_ptr<Cpu> _cpu;
+  std::shared_ptr<cpu::Manager> _cpuManager;
   std::unique_ptr<CpuStateNotifierQt> _stateNotifier;
 };
 

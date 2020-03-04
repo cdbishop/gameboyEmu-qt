@@ -19,6 +19,7 @@ public:
 private:
   void onNextBtnClicked();
   void OnRunBtnClicked();
+  void OnPauseBtnClicked();
   void OnPCBreakEditingFinnished();
   void OnRegBreakEditingFinnished();
   void OnPCBreakAdd();
@@ -29,6 +30,7 @@ private:
 signals:
   void Next();
   void Run();
+  void Pause();
   void SetPCBreak(unsigned int pcTarget);
   void SetRegBreak(std::string reg, unsigned int value);
   void RemoveRegBreak(std::string reg);

@@ -23,7 +23,7 @@ public:
     Clock() :_m(0), _t(0) {}
   };
 
-  Cpu(const std::shared_ptr<Cart> cart, std::unique_ptr<CpuStateNotifier> notifier);
+  Cpu(const std::shared_ptr<Cart> cart, std::shared_ptr<CpuStateNotifier> notifier);
 
   void Step();
 
@@ -74,7 +74,7 @@ private:
 private:
   std::shared_ptr<Cart> _cart;
   std::shared_ptr<MemoryController> _memoryController;
-  std::unique_ptr<CpuStateNotifier> _stateNotifier;
+  std::shared_ptr<CpuStateNotifier> _stateNotifier;
 
   std::shared_ptr<cpu::State> _state;
 
