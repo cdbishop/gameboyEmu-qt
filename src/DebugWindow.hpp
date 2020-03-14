@@ -15,6 +15,7 @@ public:
   DebugWindow(QApplication* app, QWidget *parent = 0);
 
   void UpdateState(const cpu::State& state, const cpu::StateHistory& history);
+  void UpdateRomData(const std::vector<Cpu::RomInstruction>& instructions);
 
   void SetState(const cpu::State& state);
 
@@ -43,5 +44,6 @@ private:
   Ui::MainWindow ui;
   QApplication* _app;
   cpu::StateHistory _cpuHistory;
+  std::map<unsigned short, int> _pcIndexLookup;
 };
 

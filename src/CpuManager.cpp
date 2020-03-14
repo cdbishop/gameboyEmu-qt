@@ -12,6 +12,9 @@ void Manager::LoadFile(const std::string& file) {
   _cart = std::make_shared<Cart>(file);
   _cpu = std::make_shared<Cpu>(_cart, _stateNotifier);
 
+  auto rom_instructions = _cpu->DumpRom();
+  _stateNotifier->NotifyRomData(rom_instructions);
+
   _runThread = std::thread([&]() {
     while (true) {
       while (_threadRunning && _cpu->Running() && !_cpu->Stepping()) {

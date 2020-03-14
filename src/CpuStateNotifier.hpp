@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cpu/StateHistory.hpp"
+#include "Cpu.hpp"
 
 namespace cpu {
 class State;
@@ -11,4 +12,5 @@ public:
   virtual ~CpuStateNotifier() { }
 
   virtual void NotifyState(const cpu::State& state, const cpu::StateHistory& history) = 0;
+  virtual void NotifyRomData(const std::vector<Cpu::RomInstruction>& instructions) = 0;
 };

@@ -42,6 +42,8 @@ public:
 
   unsigned char ReadByte(unsigned short address);
 
+  size_t GetLength() const;
+
 private:
   void ReadName();
   void ReadHeader();

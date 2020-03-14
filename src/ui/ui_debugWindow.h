@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'debugWindowpDRNJI.ui'
+** Form generated from reading UI file 'debugWindowbiSzSD.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.11.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef DEBUGWINDOWPDRNJI_H
-#define DEBUGWINDOWPDRNJI_H
+#ifndef DEBUGWINDOWBISZSD_H
+#define DEBUGWINDOWBISZSD_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
@@ -40,6 +40,7 @@ public:
     QPushButton *btn_Run;
     QListWidget *lst_History;
     QPushButton *btn_Pause;
+    QListWidget *lst_rom;
     QHBoxLayout *horizontalLayout_2;
     QFrame *frame_2;
     QLabel *lblRegA;
@@ -90,7 +91,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(832, 589);
+        MainWindow->resize(1103, 700);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         horizontalLayout_3 = new QHBoxLayout(centralwidget);
@@ -103,16 +104,19 @@ public:
         frame->setFrameShadow(QFrame::Raised);
         btn_Next = new QPushButton(frame);
         btn_Next->setObjectName(QStringLiteral("btn_Next"));
-        btn_Next->setGeometry(QRect(0, 510, 31, 23));
+        btn_Next->setGeometry(QRect(10, 340, 31, 23));
         btn_Run = new QPushButton(frame);
         btn_Run->setObjectName(QStringLiteral("btn_Run"));
-        btn_Run->setGeometry(QRect(40, 510, 31, 23));
+        btn_Run->setGeometry(QRect(50, 340, 31, 23));
         lst_History = new QListWidget(frame);
         lst_History->setObjectName(QStringLiteral("lst_History"));
-        lst_History->setGeometry(QRect(0, 0, 401, 501));
+        lst_History->setGeometry(QRect(0, 0, 401, 331));
         btn_Pause = new QPushButton(frame);
         btn_Pause->setObjectName(QStringLiteral("btn_Pause"));
-        btn_Pause->setGeometry(QRect(80, 510, 31, 23));
+        btn_Pause->setGeometry(QRect(90, 340, 31, 23));
+        lst_rom = new QListWidget(frame);
+        lst_rom->setObjectName(QStringLiteral("lst_rom"));
+        lst_rom->setGeometry(QRect(0, 390, 401, 241));
 
         horizontalLayout->addWidget(frame);
 
@@ -294,7 +298,7 @@ public:
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 832, 21));
+        menubar->setGeometry(QRect(0, 0, 1103, 21));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QStringLiteral("statusbar"));
@@ -360,4 +364,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // DEBUGWINDOWPDRNJI_H
+#endif // DEBUGWINDOWBISZSD_H

@@ -2,16 +2,19 @@
 #include "Cart.hpp"
 #include "Instruction.hpp"
 #include "Registers.hpp"
-#include "CpuStateNotifier.hpp"
+//#include "CpuStateNotifier.hpp"
 #include "CpuDebug.hpp"
 #include "cpu/StateHistory.hpp"
 #include "CpuState.hpp"
 #include "cpu/flag.hpp"
 
 class MemoryController;
+class CpuStateNotifier;
 
 class Cpu {
 public:  
+  using RomInstruction = std::pair<unsigned short, Instruction>;
+
   struct Clock {
     unsigned int _m;
     unsigned int _t;
@@ -22,6 +25,8 @@ public:
   Cpu(const std::shared_ptr<Cart> cart, std::shared_ptr<CpuStateNotifier> notifier);
 
   void Step();
+
+  std::vector<RomInstruction> DumpRom();
 
   unsigned char ReadByteOffset(unsigned int offset);
 

@@ -38,6 +38,10 @@ unsigned char Cart::ReadByte(unsigned short address)
   return _buffer[address];
 }
 
+size_t Cart::GetLength() const {
+  return _buffer.size();
+}
+
 void Cart::ReadName() {
   // name
   std::vector<unsigned char>::const_iterator first = _buffer.begin() + (int)RomDataOffset::NameStart;

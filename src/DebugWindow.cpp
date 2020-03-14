@@ -33,6 +33,8 @@ DebugWindow::DebugWindow(QApplication* app, QWidget *parent)
   connect(ui.btn_RemoveBreak, &QPushButton::clicked, this, &DebugWindow::OnBreakRemove);  
 
   connect(ui.lst_History, &QAbstractItemView::clicked, this, &DebugWindow::OnPreviousStateSelected);
+
+  //ui.lst_rom->setEnabled(false);
 }
 
 void DebugWindow::UpdateState(const cpu::State& state, const cpu::StateHistory& history)
@@ -49,6 +51,18 @@ void DebugWindow::UpdateState(const cpu::State& state, const cpu::StateHistory& 
   //_cpuHistory = history;
   for (auto i = _cpuHistory.size(); i < history.size(); ++i) {
     _cpuHistory.push_back(history[i]);
+  }
+
+  int index = static_cast<int>(state._pc);  
+  ui.lst_rom->setCurrentRow(_pcIndexLookup[index]);
+}
+
+void DebugWindow::UpdateRomData(const std::vector<Cpu::RomInstruction>& instructions) {
+  for (auto& instruction : instructions) {
+    std::stringstream ss;
+    ss << "[" << std::hex << static_cast<int>(instruction.first) << "]:" << instruction.second;
+    ui.lst_rom->addItem(QString(ss.str().c_str()));
+    _pcIndexLookup[instruction.first] = (ui.lst_rom->count() - 1);
   }
 }
 

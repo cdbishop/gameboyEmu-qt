@@ -1,6 +1,7 @@
 #include "Cpu.hpp"
 
 #include "CpuState.hpp"
+#include "CpuStateNotifier.hpp"
 
 #include "Instructions/Placeholder.hpp"
 #include "Instructions/Jump.hpp"
@@ -15,6 +16,7 @@
 
 #include "spdlog/spdlog.h"
 
+#include <iostream>
 #include <map>
 #include <crtdbg.h>
 
@@ -230,13 +232,13 @@ const std::map<unsigned char, Instruction> s_lookup = {
   { 0xd0, Instruction("RET NC", 0xd0, 1, 2, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
   { 0xd1, Instruction("POP DE", 0xd1, 1, 3, &Instructions::Placeholder) },
   { 0xd2, Instruction("JP NC nn", 0xd2, 3, 3, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
-  { 0xd3, Instruction("XX - not implemented", 0xd3, 0, 0, &Instructions::Placeholder) },
+  { 0xd3, Instruction("XX - not implemented", 0xd3, 1, 0, &Instructions::Placeholder) },
   { 0xd4, Instruction("CALL NC nn", 0xd4, 3, 3, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
   { 0xd5, Instruction("PUSH DE", 0xd5, 1, 4, &Instructions::Placeholder) },
   { 0xd6, Instruction("SUB A n", 0xd6, 2, 2, &Instructions::Placeholder) },
   { 0xd7, Instruction("RST 10", 0xd7, 1, 4, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
   { 0xd8, Instruction("RET C", 0xd8, 1, 2, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
-  { 0xd9, Instruction("RETI", 0xd9, 2, 2, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
+  { 0xd9, Instruction("RETI", 0xd9, 1, 2, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
   { 0xda, Instruction("JP C nn", 0xda, 2, 2, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
   { 0xdb, Instruction("XX - not implemented", 0xdb, 1, 0, &Instructions::Placeholder) },
   { 0xdc, Instruction("CALL C nn", 0xdc, 3, 3, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
@@ -321,6 +323,22 @@ void Cpu::Step()
   if (Stepping()) {
     _stateNotifier->NotifyState(*_state, _history);
   }
+}
+
+std::vector<Cpu::RomInstruction> Cpu::DumpRom() {
+  spdlog::get("console")->info("parsing rom...");
+  std::vector<RomInstruction> instructions;
+  for (auto addr = 0; addr < _cart->GetLength();) {
+    auto code = _cart->ReadByte(addr);
+    const auto& instruction = s_lookup.at(code);
+    instructions.push_back(std::make_pair(addr, instruction));
+
+    addr += instruction.GetPCAdvance();
+  }
+
+  spdlog::get("console")->info("rom parsed");
+
+  return instructions;
 }
 
 unsigned char Cpu::ReadByteOffset(unsigned int offset)

@@ -28,8 +28,8 @@
         <widget class="QPushButton" name="btn_Next">
          <property name="geometry">
           <rect>
-           <x>0</x>
-           <y>510</y>
+           <x>10</x>
+           <y>340</y>
            <width>31</width>
            <height>23</height>
           </rect>
@@ -41,8 +41,8 @@
         <widget class="QPushButton" name="btn_Run">
          <property name="geometry">
           <rect>
-           <x>40</x>
-           <y>510</y>
+           <x>50</x>
+           <y>340</y>
            <width>31</width>
            <height>23</height>
           </rect>
@@ -57,21 +57,31 @@
            <x>0</x>
            <y>0</y>
            <width>401</width>
-           <height>501</height>
+           <height>331</height>
           </rect>
          </property>
         </widget>
         <widget class="QPushButton" name="btn_Pause">
          <property name="geometry">
           <rect>
-           <x>80</x>
-           <y>510</y>
+           <x>90</x>
+           <y>340</y>
            <width>31</width>
            <height>23</height>
           </rect>
          </property>
          <property name="text">
           <string>||</string>
+         </property>
+        </widget>
+        <widget class="QListWidget" name="lst_rom">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>390</y>
+           <width>401</width>
+           <height>241</height>
+          </rect>
          </property>
         </widget>
        </widget>
