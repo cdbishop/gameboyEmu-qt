@@ -286,7 +286,7 @@ Cpu::Cpu(const std::shared_ptr<Cart> cart, std::shared_ptr<CpuStateNotifier> not
   _stepping(true) {
 
   _memoryController = std::make_shared<MemoryController>();
-  _stateNotifier->NotifyState(*_state);
+  _stateNotifier->NotifyState(*_state, _history);
 }
 
 void Cpu::Step()
@@ -316,8 +316,10 @@ void Cpu::Step()
 
   _state->_history.push_back(instruction);
 
+  _history.push_back(std::make_pair(instruction, *_state));
+
   if (Stepping()) {
-    _stateNotifier->NotifyState(*_state);
+    _stateNotifier->NotifyState(*_state, _history);
   }
 }
 
@@ -420,13 +422,13 @@ void Cpu::DecRegister(Register8 reg)
 
   ClearFlags();
   if (val == 0) {
-    SetFlag(Flag::Zero);
+    SetFlag(cpu::Flag::Zero);
   }
 
-  SetFlag(Flag::SubOp);
+  SetFlag(cpu::Flag::SubOp);
 
   if (((original & 0xF) - 1) < 0) {
-    SetFlag(Flag::HalfCarry);
+    SetFlag(cpu::Flag::HalfCarry);
   }
 
   SetRegister(reg, val);
@@ -454,22 +456,22 @@ void Cpu::ClearFlags()
   _state->_flag = 0;
 }
 
-void Cpu::SetFlag(Flag flag)
+void Cpu::SetFlag(cpu::Flag flag)
 {
   switch (flag) {
-    case Flag::Carry:
+    case cpu::Flag::Carry:
       _state->_flag |= 0x10;
       break;
 
-    case Flag::HalfCarry:
+    case cpu::Flag::HalfCarry:
       _state->_flag |= 0x20;
       break;
 
-    case Flag::SubOp:
+    case cpu::Flag::SubOp:
       _state->_flag |= 0x40;
       break;
 
-    case Flag::Zero:
+    case cpu::Flag::Zero:
       _state->_flag |= 0x80;
       break;
 
@@ -478,19 +480,19 @@ void Cpu::SetFlag(Flag flag)
   }
 }
 
-bool Cpu::TestFlag(Flag flag)
+bool Cpu::TestFlag(cpu::Flag flag)
 {
   switch (flag) {
-    case Flag::Carry:
+    case cpu::Flag::Carry:
       return (_state->_flag & 0x10) == 0x10;
 
-    case Flag::HalfCarry:
+    case cpu::Flag::HalfCarry:
       return (_state->_flag & 0x20) == 0x20;
 
-    case Flag::SubOp:
+    case cpu::Flag::SubOp:
       return (_state->_flag & 0x40) == 0x40;
 
-    case Flag::Zero:
+    case cpu::Flag::Zero:
       return (_state->_flag & 0x80) == 0x80;
 
     default:
@@ -498,22 +500,22 @@ bool Cpu::TestFlag(Flag flag)
   }
 }
 
-void Cpu::ClearFlag(Flag flag)
+void Cpu::ClearFlag(cpu::Flag flag)
 {
   switch (flag) {
-    case Flag::Carry:
+    case cpu::Flag::Carry:
       _state->_flag &= !0x10;
       break;
 
-    case Flag::HalfCarry:
+    case cpu::Flag::HalfCarry:
       _state->_flag &= !0x20;
       break;
 
-    case Flag::SubOp:
+    case cpu::Flag::SubOp:
       _state->_flag &= !0x40;
       break;
 
-    case Flag::Zero:
+    case cpu::Flag::Zero:
       _state->_flag &= !0x80;
       break;
 
@@ -537,7 +539,7 @@ void Cpu::EnableStepping(bool enable)
 {
   _stepping = enable;
   if (!_stepping) {
-    _stateNotifier->NotifyState(*_state);
+    _stateNotifier->NotifyState(*_state, _history);
   }
 }
 

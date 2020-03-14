@@ -63,18 +63,18 @@ namespace cpu {
       }
     }
 
-    bool State::TestFlag(Cpu::Flag flag) const {
+    bool State::TestFlag(cpu::Flag flag) const {
       switch (flag) {
-      case Cpu::Flag::Carry:
+      case cpu::Flag::Carry:
         return (_flag & 0x10) == 0x10;
 
-      case Cpu::Flag::HalfCarry:
+      case cpu::Flag::HalfCarry:
         return (_flag & 0x20) == 0x20;
 
-      case Cpu::Flag::SubOp:
+      case cpu::Flag::SubOp:
         return (_flag & 0x40) == 0x40;
 
-      case Cpu::Flag::Zero:
+      case cpu::Flag::Zero:
         return (_flag & 0x80) == 0x80;
 
       default:

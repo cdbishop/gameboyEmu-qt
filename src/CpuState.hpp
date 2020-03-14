@@ -3,6 +3,7 @@
 #include <Instruction.hpp>
 #include "Registers.hpp"
 #include "Cpu.hpp"
+#include "cpu/flag.hpp"
 
 namespace cpu {
 class State {
@@ -24,7 +25,7 @@ public:
 
   unsigned short ReadRegister(Register16 reg) const;
 
-  bool TestFlag(Cpu::Flag flag) const;
+  bool TestFlag(cpu::Flag flag) const;
 
   void EnabledInterrupts();
   void DisableInterrupts();

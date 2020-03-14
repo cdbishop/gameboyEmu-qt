@@ -4,18 +4,14 @@
 #include "Registers.hpp"
 #include "CpuStateNotifier.hpp"
 #include "CpuDebug.hpp"
+#include "cpu/StateHistory.hpp"
+#include "CpuState.hpp"
+#include "cpu/flag.hpp"
 
 class MemoryController;
 
 class Cpu {
-public:
-  enum class Flag {
-    Zero,
-    SubOp,
-    HalfCarry,
-    Carry
-  };
-
+public:  
   struct Clock {
     unsigned int _m;
     unsigned int _t;
@@ -49,9 +45,9 @@ public:
   void IncRegister(Register16 reg);
 
   void ClearFlags();  
-  void SetFlag(Flag flag);
-  bool TestFlag(Flag flag);
-  void ClearFlag(Flag flag);
+  void SetFlag(cpu::Flag flag);
+  bool TestFlag(cpu::Flag flag);
+  void ClearFlag(cpu::Flag flag);
 
   bool Running();
   bool Stepping();
@@ -77,6 +73,8 @@ private:
   std::shared_ptr<CpuStateNotifier> _stateNotifier;
 
   std::shared_ptr<cpu::State> _state;
+
+  cpu::StateHistory _history;
 
   unsigned int _numCycles;
 

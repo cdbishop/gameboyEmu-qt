@@ -14,22 +14,22 @@ void Instructions::CompareRegisterImmediate(Cpu * cpu, Register8 src)
   short result = signed_src - signed_immediate;
 
   if ((signed_src & 0xF) - (signed_immediate & 0xF) < 0) {
-    cpu->SetFlag(Cpu::Flag::HalfCarry);
+    cpu->SetFlag(cpu::Flag::HalfCarry);
   } else {
-    cpu->ClearFlag(Cpu::Flag::HalfCarry);
+    cpu->ClearFlag(cpu::Flag::HalfCarry);
   }
 
   if (result < 0) {
-    cpu->SetFlag(Cpu::Flag::Carry);
+    cpu->SetFlag(cpu::Flag::Carry);
   } else {
-    cpu->ClearFlag(Cpu::Flag::Carry);
+    cpu->ClearFlag(cpu::Flag::Carry);
   }
 
-  cpu->SetFlag(Cpu::Flag::SubOp);
+  cpu->SetFlag(cpu::Flag::SubOp);
 
   if ((result & 0xFF) == 0) {
-    cpu->SetFlag(Cpu::Flag::Zero);
+    cpu->SetFlag(cpu::Flag::Zero);
   } else {
-    cpu->ClearFlag(Cpu::Flag::Zero);
+    cpu->ClearFlag(cpu::Flag::Zero);
   }
 }

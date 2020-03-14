@@ -31,10 +31,28 @@ DebugWindow::DebugWindow(QApplication* app, QWidget *parent)
   connect(ui.btn_AddRegBreak, &QPushButton::clicked, this, &DebugWindow::OnRegBreakAdd);
   connect(ui.tbl_Breaks, &QTableWidget::itemSelectionChanged, this, &DebugWindow::OnBreakSelected);
   connect(ui.btn_RemoveBreak, &QPushButton::clicked, this, &DebugWindow::OnBreakRemove);  
+
+  connect(ui.lst_History, &QAbstractItemView::clicked, this, &DebugWindow::OnPreviousStateSelected);
 }
 
-void DebugWindow::UpdateState(const cpu::State& state)
+void DebugWindow::UpdateState(const cpu::State& state, const cpu::StateHistory& history)
 {
+  SetState(state);
+  
+  ui.lst_History->clear();
+  for (auto&& inst : state._history) {
+    std::ostringstream ss;
+    ss << inst;
+    ui.lst_History->addItem(QString(ss.str().c_str()));
+  }
+
+  //_cpuHistory = history;
+  for (auto i = _cpuHistory.size(); i < history.size(); ++i) {
+    _cpuHistory.push_back(history[i]);
+  }
+}
+
+void DebugWindow::SetState(const cpu::State& state) {
   ui.lineEditRegA->setText(FormatValueHex(state._a));
   ui.lineEditRegB->setText(FormatValueHex(state._b));
   ui.lineEditRegC->setText(FormatValueHex(state._c));
@@ -50,17 +68,10 @@ void DebugWindow::UpdateState(const cpu::State& state)
   ui.lineEditRegDE->setText(FormatValueHex(state.ReadRegister(Register16::DE)));
   ui.lineEditRegHL->setText(FormatValueHex(state.ReadRegister(Register16::HL)));
 
-  ui.chk_flagCarry->setChecked((state.TestFlag(Cpu::Flag::Carry)));
-  ui.chk_flagHalfCarry->setChecked((state.TestFlag(Cpu::Flag::HalfCarry)));
-  ui.chk_flagSubOp->setChecked((state.TestFlag(Cpu::Flag::SubOp)));
-  ui.chk_flagZero->setChecked((state.TestFlag(Cpu::Flag::Zero)));  
-  
-  ui.lst_History->clear();
-  for (auto&& inst : state._history) {
-    std::ostringstream ss;
-    ss << inst;
-    ui.lst_History->addItem(QString(ss.str().c_str()));
-  }
+  ui.chk_flagCarry->setChecked((state.TestFlag(cpu::Flag::Carry)));
+  ui.chk_flagHalfCarry->setChecked((state.TestFlag(cpu::Flag::HalfCarry)));
+  ui.chk_flagSubOp->setChecked((state.TestFlag(cpu::Flag::SubOp)));
+  ui.chk_flagZero->setChecked((state.TestFlag(cpu::Flag::Zero)));
 }
 
 void DebugWindow::onNextBtnClicked()
@@ -166,4 +177,11 @@ void DebugWindow::OnBreakRemove()
   ui.tbl_Breaks->removeRow(item->row());  
 
   emit RemoveRegBreak(v.toString().toStdString());
+}
+
+void DebugWindow::OnPreviousStateSelected(const QModelIndex& index) {
+  spdlog::get("console")->debug("selected index: {}", index.row());
+
+  auto history = _cpuHistory[index.row()];
+  SetState(history.second);
 }

@@ -6,7 +6,7 @@ CpuStateNotifierQt::CpuStateNotifierQt(DebugWindow* window)
 {
 }
 
-void CpuStateNotifierQt::NotifyState(const cpu::State& state)
+void CpuStateNotifierQt::NotifyState(const cpu::State& state, const cpu::StateHistory& history)
 {
-  _window->UpdateState(state);
+  _window->UpdateState(state, history);
 }

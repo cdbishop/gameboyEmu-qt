@@ -14,7 +14,9 @@ class DebugWindow : public QMainWindow
 public:
   DebugWindow(QApplication* app, QWidget *parent = 0);
 
-  void UpdateState(const cpu::State& state);
+  void UpdateState(const cpu::State& state, const cpu::StateHistory& history);
+
+  void SetState(const cpu::State& state);
 
 private:
   void onNextBtnClicked();
@@ -26,6 +28,7 @@ private:
   void OnRegBreakAdd();
   void OnBreakSelected();
   void OnBreakRemove();
+  void OnPreviousStateSelected(const QModelIndex& index);
 
 signals:
   void Next();
@@ -39,5 +42,6 @@ signals:
 private:
   Ui::MainWindow ui;
   QApplication* _app;
+  cpu::StateHistory _cpuHistory;
 };
 

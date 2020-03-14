@@ -5,11 +5,21 @@ namespace cpu {
 
 Manager::Manager(std::shared_ptr<CpuStateNotifierQt> notifier)
   :_stateNotifier(notifier),
-   _threadRunning(false) {}
+   _threadRunning(false) {
+}
 
 void Manager::LoadFile(const std::string& file) {
   _cart = std::make_shared<Cart>(file);
   _cpu = std::make_shared<Cpu>(_cart, _stateNotifier);
+
+  _runThread = std::thread([&]() {
+    while (true) {
+      while (_threadRunning && _cpu->Running() && !_cpu->Stepping()) {
+        std::lock_guard lk(_lock);
+        _cpu->Step();
+      }
+    }
+  });
 }
 
 void Manager::Step() {
@@ -21,23 +31,17 @@ void Manager::Run() {
   if (_threadRunning)
     return;
 
+  std::lock_guard lk(_lock);
+  _threadRunning = true;
+
   // TODO: this needs to be separate thread.
   spdlog::get("console")->debug("Received Run signal");
   _cpu->EnableStepping(false);
-
-  _runThread = std::thread([&]() {
-    _threadRunning = true;
-    while (_cpu->Running() && !_cpu->Stepping()) {
-      std::lock_guard lk(_lock);
-      _cpu->Step();
-    }
-    spdlog::get("console")->debug("Run stopped");
-    _threadRunning = false;
-  });
 }
 
 void Manager::Pause() {
   std::lock_guard lk(_lock);
+  _threadRunning = false;
   _cpu->EnableStepping(true);
 }
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "cpu/StateHistory.hpp"
+
 namespace cpu {
 class State;
 }
@@ -8,5 +10,5 @@ public:
   CpuStateNotifier() { }
   virtual ~CpuStateNotifier() { }
 
-  virtual void NotifyState(const cpu::State& state) = 0;
+  virtual void NotifyState(const cpu::State& state, const cpu::StateHistory& history) = 0;
 };
