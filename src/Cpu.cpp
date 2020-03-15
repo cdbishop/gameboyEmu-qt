@@ -320,9 +320,7 @@ void Cpu::Step()
 
   _history.push_back(std::make_pair(instruction, *_state));
 
-  if (Stepping()) {
-    _stateNotifier->NotifyState(*_state, _history);
-  }
+  _stateNotifier->NotifyState(*_state, _history);
 }
 
 std::vector<Cpu::RomInstruction> Cpu::DumpRom() {

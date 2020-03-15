@@ -8,6 +8,8 @@
 #include "CpuState.hpp"
 #include "cpu/flag.hpp"
 
+#include <qmetatype.h>
+
 class MemoryController;
 class CpuStateNotifier;
 

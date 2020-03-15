@@ -5,6 +5,8 @@
 #include "Cpu.hpp"
 #include "cpu/flag.hpp"
 
+#include <qmetatype.h>
+
 namespace cpu {
 class State {
 public:
@@ -51,3 +53,5 @@ public:
 
 };
 }
+
+Q_DECLARE_METATYPE(cpu::State)

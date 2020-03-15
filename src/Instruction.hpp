@@ -3,6 +3,8 @@
 #include <functional>
 #include <spdlog/fmt/ostr.h>
 
+#include <qmetatype.h>
+
 class Cpu;
 
 class Instruction {
@@ -15,7 +17,8 @@ public:
 
   typedef std::function<void(Cpu*)> ExecuteFn;
 
-  Instruction(std::string instruction, int code, unsigned int pcAdvance, int cycles, ExecuteFn impl, OpOrder opOrder = OpOrder::Post);
+  Instruction();
+  Instruction(std::string instruction, int code, unsigned int pcAdvance, int cycles, ExecuteFn impl, OpOrder opOrder = OpOrder::Post);  
 
   int GetPCAdvance() const;
   int GetCycles() const;
@@ -36,3 +39,5 @@ private:
   ExecuteFn _implFn;
   OpOrder  _opOrder;
 };
+
+Q_DECLARE_METATYPE(Instruction)

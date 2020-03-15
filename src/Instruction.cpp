@@ -1,5 +1,12 @@
 #include "Instruction.hpp"
 
+Instruction::Instruction()
+  :_asmInstruction("NOOP"),
+  _code(0),
+  _pcAdvance(0),
+  _cycles(0) {}
+   
+
 Instruction::Instruction(std::string instruction, int code, unsigned int pcAdvance, int cycles, ExecuteFn impl, OpOrder opOrder)
   :_asmInstruction(instruction),
   _code(code),

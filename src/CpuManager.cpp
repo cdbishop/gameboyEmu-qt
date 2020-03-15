@@ -19,7 +19,9 @@ void Manager::LoadFile(const std::string& file) {
     while (true) {
       while (_threadRunning && _cpu->Running() && !_cpu->Stepping()) {
         std::lock_guard lk(_lock);
+        // TODO: cpu needs proper timing
         _cpu->Step();
+        std::this_thread::sleep_for(std::chrono::seconds(1));
       }
     }
   });

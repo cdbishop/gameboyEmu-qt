@@ -8,16 +8,24 @@
 #include "CpuState.hpp"
 #include "CpuStateNotifierQt.hpp"
 
+#include <thread>
+#include <mutex>
+
 class DebugWindow : public QMainWindow
 {
   Q_OBJECT
 public:
   DebugWindow(QApplication* app, QWidget *parent = 0);
 
+  void SetStateNotifier(std::shared_ptr<CpuStateNotifierQt> notifier);
+
   void UpdateState(const cpu::State& state, const cpu::StateHistory& history);
   void UpdateRomData(const std::vector<Cpu::RomInstruction>& instructions);
 
   void SetState(const cpu::State& state);
+
+  void OnNotifyStateSignal(const cpu::State& state, const cpu::StateHistory& history);
+  void OnNotifyRomDataSignal(const std::vector<Cpu::RomInstruction>& instructions);
 
 private:
   void onNextBtnClicked();
@@ -45,5 +53,5 @@ private:
   QApplication* _app;
   cpu::StateHistory _cpuHistory;
   std::map<unsigned short, int> _pcIndexLookup;
+  std::mutex _stateMutex;
 };
-

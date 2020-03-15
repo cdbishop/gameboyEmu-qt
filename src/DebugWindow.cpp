@@ -33,22 +33,24 @@ DebugWindow::DebugWindow(QApplication* app, QWidget *parent)
   connect(ui.btn_RemoveBreak, &QPushButton::clicked, this, &DebugWindow::OnBreakRemove);  
 
   connect(ui.lst_History, &QAbstractItemView::clicked, this, &DebugWindow::OnPreviousStateSelected);
+}
 
-  //ui.lst_rom->setEnabled(false);
+void DebugWindow::SetStateNotifier(std::shared_ptr<CpuStateNotifierQt> notifier) {
+  bool ret = connect(notifier.get(), &CpuStateNotifierQt::NotifyStateSignal, this, &DebugWindow::OnNotifyStateSignal);
+  ret = connect(notifier.get(), &CpuStateNotifierQt::NotifyRomDataSignal, this, &DebugWindow::OnNotifyRomDataSignal);
 }
 
 void DebugWindow::UpdateState(const cpu::State& state, const cpu::StateHistory& history)
 {
+  std::lock_guard lk(_stateMutex);
   SetState(state);
   
-  ui.lst_History->clear();
-  for (auto&& inst : state._history) {
+  for (auto i = ui.lst_History->count(); i < state._history.size(); ++i) {
     std::ostringstream ss;
-    ss << inst;
+    ss << state._history[i];
     ui.lst_History->addItem(QString(ss.str().c_str()));
   }
 
-  //_cpuHistory = history;
   for (auto i = _cpuHistory.size(); i < history.size(); ++i) {
     _cpuHistory.push_back(history[i]);
   }
@@ -198,4 +200,12 @@ void DebugWindow::OnPreviousStateSelected(const QModelIndex& index) {
 
   auto history = _cpuHistory[index.row()];
   SetState(history.second);
+}
+
+void DebugWindow::OnNotifyStateSignal(const cpu::State& state, const cpu::StateHistory& history) {
+  UpdateState(state, history);
+}
+
+void DebugWindow::OnNotifyRomDataSignal(const std::vector<Cpu::RomInstruction>& instructions) {
+  UpdateRomData(instructions);
 }

@@ -22,9 +22,10 @@ int main(int argc, char** argv) {
   DebugWindow debugWindow(&app);
   debugWindow.show();
 
-  std::unique_ptr<CpuStateNotifierQt> state = std::make_unique<CpuStateNotifierQt>(&debugWindow);
+  std::shared_ptr<CpuStateNotifierQt> state = std::make_shared<CpuStateNotifierQt>(&debugWindow);  
 
-  std::shared_ptr<cpu::Manager> cpuManager = std::make_shared<cpu::Manager>(std::move(state));
+  std::shared_ptr<cpu::Manager> cpuManager = std::make_shared<cpu::Manager>(state);
+  debugWindow.SetStateNotifier(state);
 
   RenderWindow renderWindow(cpuManager, &debugWindow);
   renderWindow.show();
