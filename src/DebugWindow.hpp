@@ -7,6 +7,7 @@
 
 #include "CpuState.hpp"
 #include "CpuStateNotifierQt.hpp"
+#include "RunSpeed.hpp"
 
 #include <thread>
 #include <mutex>
@@ -41,7 +42,7 @@ private:
 
 signals:
   void Next();
-  void Run();
+  void Run(RunSpeed speed);
   void Pause();
   void SetPCBreak(unsigned int pcTarget);
   void SetRegBreak(std::string reg, unsigned int value);

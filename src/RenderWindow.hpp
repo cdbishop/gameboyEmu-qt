@@ -6,6 +6,7 @@
 #include "SFMLCanvasTest.hpp"
 #include "CpuStateNotifierQt.hpp"
 #include "CpuManager.hpp"
+#include "RunSpeed.hpp"
 
 class Cart;
 class Cpu;
@@ -18,7 +19,7 @@ public:
   ~RenderWindow();
 
   void CpuStep();
-  void CpuRun();
+  void CpuRun(RunSpeed speed);
   void CpuPause();
 
 private slots:

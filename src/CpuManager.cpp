@@ -17,11 +17,15 @@ void Manager::LoadFile(const std::string& file) {
 
   _runThread = std::thread([&]() {
     while (true) {
-      while (_threadRunning && _cpu->Running() && !_cpu->Stepping()) {
+      while (_threadRunning && _cpu->Running()) {
+        if (_currentRunSpeed == RunSpeed::Stepping)
+          std::this_thread::sleep_for(std::chrono::seconds(1));
+        else
+          std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
         std::lock_guard lk(_lock);
         // TODO: cpu needs proper timing
-        _cpu->Step();
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        _cpu->Step();        
       }
     }
   });
@@ -32,16 +36,18 @@ void Manager::Step() {
   _cpu->Step();
 }
 
-void Manager::Run() {
+void Manager::Run(RunSpeed speed) {
   if (_threadRunning)
     return;
 
   std::lock_guard lk(_lock);
   _threadRunning = true;
 
+  _currentRunSpeed = speed;
+
   // TODO: this needs to be separate thread.
   spdlog::get("console")->debug("Received Run signal");
-  _cpu->EnableStepping(false);
+  _cpu->EnableStepping(_currentRunSpeed == RunSpeed::Stepping);
 }
 
 void Manager::Pause() {

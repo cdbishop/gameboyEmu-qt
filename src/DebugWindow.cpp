@@ -51,8 +51,16 @@ void DebugWindow::UpdateState(const cpu::State& state, const cpu::StateHistory& 
     ui.lst_History->addItem(QString(ss.str().c_str()));
   }
 
+  while (ui.lst_History->count() > 50) {
+    ui.lst_History->removeItemWidget(ui.lst_History->item(0));
+  }
+
   for (auto i = _cpuHistory.size(); i < history.size(); ++i) {
     _cpuHistory.push_back(history[i]);
+  }
+
+  while (_cpuHistory.size() > 50) {
+    _cpuHistory.erase(_cpuHistory.begin());
   }
 
   int index = static_cast<int>(state._pc);  
@@ -99,7 +107,8 @@ void DebugWindow::onNextBtnClicked()
 void DebugWindow::OnRunBtnClicked()
 {
   spdlog::get("console")->debug("Run clicked!");
-  emit Run();
+  QString runMode = ui.cmbo_RunSpeed->itemText(ui.cmbo_RunSpeed->currentIndex());
+  emit Run((runMode == "Debug") ? RunSpeed::Stepping : RunSpeed::Full);
 }
 
 void DebugWindow::OnPauseBtnClicked()

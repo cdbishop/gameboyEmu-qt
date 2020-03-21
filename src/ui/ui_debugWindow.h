@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'debugWindowbiSzSD.ui'
+** Form generated from reading UI file 'debugWindowYJOFKs.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.11.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef DEBUGWINDOWBISZSD_H
-#define DEBUGWINDOWBISZSD_H
+#ifndef DEBUGWINDOWYJOFKS_H
+#define DEBUGWINDOWYJOFKS_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
@@ -41,6 +41,7 @@ public:
     QListWidget *lst_History;
     QPushButton *btn_Pause;
     QListWidget *lst_rom;
+    QComboBox *cmbo_RunSpeed;
     QHBoxLayout *horizontalLayout_2;
     QFrame *frame_2;
     QLabel *lblRegA;
@@ -113,10 +114,15 @@ public:
         lst_History->setGeometry(QRect(0, 0, 401, 331));
         btn_Pause = new QPushButton(frame);
         btn_Pause->setObjectName(QStringLiteral("btn_Pause"));
-        btn_Pause->setGeometry(QRect(90, 340, 31, 23));
+        btn_Pause->setGeometry(QRect(170, 340, 31, 23));
         lst_rom = new QListWidget(frame);
         lst_rom->setObjectName(QStringLiteral("lst_rom"));
         lst_rom->setGeometry(QRect(0, 390, 401, 241));
+        cmbo_RunSpeed = new QComboBox(frame);
+        cmbo_RunSpeed->addItem(QString());
+        cmbo_RunSpeed->addItem(QString());
+        cmbo_RunSpeed->setObjectName(QStringLiteral("cmbo_RunSpeed"));
+        cmbo_RunSpeed->setGeometry(QRect(90, 340, 69, 22));
 
         horizontalLayout->addWidget(frame);
 
@@ -315,6 +321,9 @@ public:
         btn_Next->setText(QApplication::translate("MainWindow", ">", nullptr));
         btn_Run->setText(QApplication::translate("MainWindow", ">>", nullptr));
         btn_Pause->setText(QApplication::translate("MainWindow", "||", nullptr));
+        cmbo_RunSpeed->setItemText(0, QApplication::translate("MainWindow", "Debug", nullptr));
+        cmbo_RunSpeed->setItemText(1, QApplication::translate("MainWindow", "Full", nullptr));
+
         lblRegA->setText(QApplication::translate("MainWindow", "A", nullptr));
         lblRegB->setText(QApplication::translate("MainWindow", "B", nullptr));
         lblRegC->setText(QApplication::translate("MainWindow", "C", nullptr));
@@ -364,4 +373,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // DEBUGWINDOWBISZSD_H
+#endif // DEBUGWINDOWYJOFKS_H

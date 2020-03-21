@@ -4,6 +4,7 @@
 #include <CpuStateNotifierQt.hpp>
 #include <Cpu.hpp>
 #include <Cart.hpp>
+#include <RunSpeed.hpp>
 
 #include <thread>
 #include <mutex>
@@ -19,7 +20,7 @@ public:
 
   void Step();
 
-  void Run();
+  void Run(RunSpeed speed);
 
   void Pause();
 
@@ -37,6 +38,7 @@ private:
 
   std::thread _runThread;
   std::atomic<bool> _threadRunning;
+  RunSpeed _currentRunSpeed;
 };
 
 }

@@ -56,9 +56,9 @@ void RenderWindow::CpuStep()
   _cpuManager->Step();
 }
 
-void RenderWindow::CpuRun()
+void RenderWindow::CpuRun(RunSpeed speed)
 {
-  _cpuManager->Run();
+  _cpuManager->Run(speed);
 }
 
 void RenderWindow::CpuPause()

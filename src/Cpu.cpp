@@ -308,8 +308,6 @@ void Cpu::Step()
     AdvanceState(instruction);
   }
  
-  spdlog::get("console")->debug("Processing instruction: {}", instruction);
-
   instruction.Execute(this);
  
   if (instruction.GetOpOrder() == Instruction::OpOrder::Post) {
@@ -320,7 +318,8 @@ void Cpu::Step()
 
   _history.push_back(std::make_pair(instruction, *_state));
 
-  _stateNotifier->NotifyState(*_state, _history);
+  if (_stepping)
+    _stateNotifier->NotifyState(*_state, _history);
 }
 
 std::vector<Cpu::RomInstruction> Cpu::DumpRom() {
