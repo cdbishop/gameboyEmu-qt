@@ -11,6 +11,7 @@
 
 #include <thread>
 #include <mutex>
+#include <set>
 
 class DebugWindow : public QMainWindow
 {
@@ -39,6 +40,7 @@ private:
   void OnBreakSelected();
   void OnBreakRemove();
   void OnPreviousStateSelected(const QModelIndex& index);
+  void OnRomInstructionDoubleClicked(const QModelIndex& index);
 
 signals:
   void Next();
@@ -55,4 +57,5 @@ private:
   cpu::StateHistory _cpuHistory;
   std::map<unsigned short, int> _pcIndexLookup;
   std::mutex _stateMutex;
+  std::set<int> _pcBreakpoints;
 };

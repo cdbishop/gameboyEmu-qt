@@ -19,13 +19,20 @@ CpuStateNotifierQt::CpuStateNotifierQt(DebugWindow* window)
   qRegisterMetaType<std::vector<Cpu::RomInstruction>>("std::vector<Cpu::RomInstruction>");
 }
 
-void CpuStateNotifierQt::NotifyState(const cpu::State& state, const cpu::StateHistory& history)
+void CpuStateNotifierQt::NotifyState(const cpu::State& state, std::shared_ptr<const cpu::StateHistory> history)
 {
   _updateFlag |= UpdateFlag_State;
 
   std::unique_lock lk(_notifyMutex);  
   _nextState = state;
-  _nextStateHistory = history;
+  //_nextStateHistory = history;
+
+  if (history) {
+    const cpu::StateHistory& ref = *history;
+    for (auto i = _nextStateHistory.size(); i < ref.size(); ++i) {
+      _nextStateHistory.push_back(ref[i]);
+    }
+  }
   _notified = true;
   _notifyCv.notify_one();
 }

@@ -2,7 +2,6 @@
 #include "Cart.hpp"
 #include "Instruction.hpp"
 #include "Registers.hpp"
-//#include "CpuStateNotifier.hpp"
 #include "CpuDebug.hpp"
 #include "cpu/StateHistory.hpp"
 #include "CpuState.hpp"
@@ -17,14 +16,8 @@ class Cpu {
 public:  
   using RomInstruction = std::pair<unsigned short, Instruction>;
 
-  struct Clock {
-    unsigned int _m;
-    unsigned int _t;
-
-    Clock() :_m(0), _t(0) {}
-  };
-
-  Cpu(const std::shared_ptr<Cart> cart, std::shared_ptr<CpuStateNotifier> notifier);
+  Cpu(const std::shared_ptr<Cart> cart, std::shared_ptr<CpuStateNotifier> notifier,
+    std::shared_ptr<MemoryController> memoryController);
 
   void Step();
 
@@ -71,6 +64,12 @@ public:
   void EnableInterrupts();
   void DisableInterrupts();
 
+  bool BreakpointHit() const;
+
+  void ResetBreakpointFlag();
+
+  std::shared_ptr<cpu::State> GetState();
+
 private:
   void AdvanceState(const Instruction& instruction);
 
@@ -80,12 +79,7 @@ private:
   std::shared_ptr<CpuStateNotifier> _stateNotifier;
 
   std::shared_ptr<cpu::State> _state;
-
-  cpu::StateHistory _history;
-
-  unsigned int _numCycles;
-
-  Clock _clock;
+  std::shared_ptr<cpu::StateHistory> _history;
 
   unsigned int _pcBreakTarget;
 
@@ -93,4 +87,5 @@ private:
 
   bool _running;
   bool _stepping;
+  bool _breakpoint_hit;
 };

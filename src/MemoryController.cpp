@@ -1,7 +1,9 @@
 #include "MemoryController.hpp"
 
-MemoryController::MemoryController()
-{
+MemoryController::MemoryController(std::shared_ptr<Gpu> gpu)
+  :_inbios(true),
+   _gpu(gpu) {
+  _bios.resize(0xFF, 0);
   _rom.resize(0x8000, 0);
   _wram.resize(0x4000, 0);
   _eram.resize(0x2000, 0);
@@ -16,21 +18,26 @@ void MemoryController::WriteByte(unsigned short address, unsigned char value)
 {
   auto range = GetAddressRange(address);
   switch (range) {
+    case AddressRange::BIOS:
+      throw std::runtime_error("not implemented");
+      if (_inbios) {
+        //TODO:
+      }
     case AddressRange::ROM0:
     case AddressRange::ROM1:
       _rom[address] = value;
       break;
 
     case AddressRange::VRAM:
-      //throw std::runtime_error("not implemented");
+      _gpu->WriteVRAMByte(address & 0x1FFF, value);
       break;
 
     case AddressRange::OAM:
-      //throw std::runtime_error("not implemented");
+      throw std::runtime_error("not implemented");
       break;
 
     case AddressRange::IO:
-      //throw std::runtime_error("not implemented");
+      throw std::runtime_error("not implemented");
       break;
 
     case AddressRange::ERAM:

@@ -33,6 +33,7 @@ DebugWindow::DebugWindow(QApplication* app, QWidget *parent)
   connect(ui.btn_RemoveBreak, &QPushButton::clicked, this, &DebugWindow::OnBreakRemove);  
 
   connect(ui.lst_History, &QAbstractItemView::clicked, this, &DebugWindow::OnPreviousStateSelected);
+  connect(ui.lst_rom, &QListWidget::doubleClicked, this, &DebugWindow::OnRomInstructionDoubleClicked);
 }
 
 void DebugWindow::SetStateNotifier(std::shared_ptr<CpuStateNotifierQt> notifier) {
@@ -45,21 +46,26 @@ void DebugWindow::UpdateState(const cpu::State& state, const cpu::StateHistory& 
   std::lock_guard lk(_stateMutex);
   SetState(state);
   
-  for (auto i = ui.lst_History->count(); i < state._history.size(); ++i) {
+  for (auto i = 0; i < state._history.size(); ++i) {
     std::ostringstream ss;
     ss << state._history[i];
     ui.lst_History->addItem(QString(ss.str().c_str()));
   }
 
+  // TODO: change 50 to be max items in circular buffer
+  // should stay in sync, as items in buffer are overridden
   while (ui.lst_History->count() > 50) {
-    ui.lst_History->removeItemWidget(ui.lst_History->item(0));
+    auto item = ui.lst_History->takeItem(0);
+    delete item;
   }
 
+  // if history was circular buffer, how to know what index to use
+  // make _cpuHistory a circular buffer with same size
   for (auto i = _cpuHistory.size(); i < history.size(); ++i) {
     _cpuHistory.push_back(history[i]);
   }
 
-  while (_cpuHistory.size() > 50) {
+  while (_cpuHistory.size() > history.max_size()) {
     _cpuHistory.erase(_cpuHistory.begin());
   }
 
@@ -72,6 +78,8 @@ void DebugWindow::UpdateRomData(const std::vector<Cpu::RomInstruction>& instruct
     std::stringstream ss;
     ss << "[" << std::hex << static_cast<int>(instruction.first) << "]:" << instruction.second;
     ui.lst_rom->addItem(QString(ss.str().c_str()));
+    QVariant data(instruction.first);
+    ui.lst_rom->item(ui.lst_rom->count() - 1)->setData(Qt::UserRole, data);
     _pcIndexLookup[instruction.first] = (ui.lst_rom->count() - 1);
   }
 }
@@ -96,6 +104,14 @@ void DebugWindow::SetState(const cpu::State& state) {
   ui.chk_flagHalfCarry->setChecked((state.TestFlag(cpu::Flag::HalfCarry)));
   ui.chk_flagSubOp->setChecked((state.TestFlag(cpu::Flag::SubOp)));
   ui.chk_flagZero->setChecked((state.TestFlag(cpu::Flag::Zero)));
+
+  ui.lineEditTimerM->setText(FormatValueHex(state._clock._m));
+  ui.lineEditTimerT->setText(FormatValueHex(state._clock._t));
+
+  ui.lst_History->setEnabled(true);
+  ui.lst_rom->setEnabled(true);
+  ui.btn_Next->setEnabled(true);
+  ui.btn_Run->setEnabled(true);
 }
 
 void DebugWindow::onNextBtnClicked()
@@ -109,12 +125,22 @@ void DebugWindow::OnRunBtnClicked()
   spdlog::get("console")->debug("Run clicked!");
   QString runMode = ui.cmbo_RunSpeed->itemText(ui.cmbo_RunSpeed->currentIndex());
   emit Run((runMode == "Debug") ? RunSpeed::Stepping : RunSpeed::Full);
+
+  ui.lst_History->setEnabled(false);
+  ui.lst_rom->setEnabled(false);
+  ui.btn_Next->setEnabled(false);
+  ui.btn_Run->setEnabled(false);
 }
 
 void DebugWindow::OnPauseBtnClicked()
 {
   spdlog::get("console")->debug("Pause clicked!");
   emit Pause();
+
+  ui.lst_History->setEnabled(true);
+  ui.lst_rom->setEnabled(true);
+  ui.btn_Next->setEnabled(true);
+  ui.btn_Run->setEnabled(true);
 }
 
 void DebugWindow::OnPCBreakEditingFinnished()
@@ -209,6 +235,23 @@ void DebugWindow::OnPreviousStateSelected(const QModelIndex& index) {
 
   auto history = _cpuHistory[index.row()];
   SetState(history.second);
+}
+
+void DebugWindow::OnRomInstructionDoubleClicked(const QModelIndex& index) {
+  auto item = ui.lst_rom->currentItem();
+  auto row = ui.lst_rom->row(item);
+
+  if (_pcBreakpoints.count(row)) {
+    _pcBreakpoints.erase(row);
+    item->setTextColor(QColor(0, 0, 0));
+    auto pc = item->data(Qt::UserRole).value<unsigned short>();
+    emit RemovePCBreak();
+  } else {
+    _pcBreakpoints.insert(ui.lst_rom->row(item));
+    item->setTextColor(QColor(255, 0, 0));
+    auto pc = item->data(Qt::UserRole).value<unsigned short>();
+    emit SetPCBreak(pc);
+  }
 }
 
 void DebugWindow::OnNotifyStateSignal(const cpu::State& state, const cpu::StateHistory& history) {

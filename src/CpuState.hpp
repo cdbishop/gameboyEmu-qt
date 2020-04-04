@@ -6,10 +6,18 @@
 #include "cpu/flag.hpp"
 
 #include <qmetatype.h>
+#include <boost/circular_buffer.hpp>
 
 namespace cpu {
 class State {
 public:
+  struct Clock {
+    unsigned int _m;
+    unsigned int _t;
+
+    Clock() :_m(0), _t(0) {}
+  };
+
   State()
     :_a(0x01),
     _b(0x00),
@@ -21,7 +29,8 @@ public:
     _l(0x4d),
     _pc(0x100),
     _sp(0xfffe),
-    _interruptsEnabled(true) {}
+    _interruptsEnabled(true),
+    _history(50) {}
 
   unsigned char ReadRegister(Register8 reg) const;
 
@@ -49,8 +58,10 @@ public:
 
   bool _interruptsEnabled;
 
-  std::vector<Instruction> _history;
+  boost::circular_buffer<Instruction> _history;
 
+  unsigned int _numCycles;
+  Clock _clock;
 };
 }
 

@@ -1,9 +1,11 @@
 #pragma once
 #include <vector>
+#include <Gpu.hpp>
 
 class MemoryController {
 public:
   enum class AddressRange {
+    BIOS,
     ROM0,
     ROM1,
     VRAM,
@@ -14,7 +16,7 @@ public:
     ZRAM,
   };
 
-  MemoryController();
+  explicit MemoryController(std::shared_ptr<Gpu> gpu);
   ~MemoryController();
 
   void WriteByte(unsigned short address, unsigned char value);
@@ -27,6 +29,10 @@ private:
   AddressRange GetAddressRange(unsigned short address);
 
 private:
+  std::shared_ptr<Gpu> _gpu;
+
+  bool _inbios;
+  std::vector<unsigned char> _bios;
   std::vector<unsigned char> _rom;
   std::vector<unsigned char> _wram;
   std::vector<unsigned char> _eram;

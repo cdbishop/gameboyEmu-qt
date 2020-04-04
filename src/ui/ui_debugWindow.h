@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'debugWindowYJOFKs.ui'
+** Form generated from reading UI file 'debugWindowRliOog.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.11.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef DEBUGWINDOWYJOFKS_H
-#define DEBUGWINDOWYJOFKS_H
+#ifndef DEBUGWINDOWRLIOOG_H
+#define DEBUGWINDOWRLIOOG_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
@@ -85,6 +85,10 @@ public:
     QCheckBox *chk_flagHalfCarry;
     QCheckBox *chk_flagSubOp;
     QCheckBox *chk_flagZero;
+    QLabel *lblTimerM;
+    QLineEdit *lineEditTimerM;
+    QLabel *lblTimerT;
+    QLineEdit *lineEditTimerT;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -295,6 +299,18 @@ public:
         chk_flagZero = new QCheckBox(frame_2);
         chk_flagZero->setObjectName(QStringLiteral("chk_flagZero"));
         chk_flagZero->setGeometry(QRect(90, 140, 70, 17));
+        lblTimerM = new QLabel(frame_2);
+        lblTimerM->setObjectName(QStringLiteral("lblTimerM"));
+        lblTimerM->setGeometry(QRect(300, 20, 20, 20));
+        lineEditTimerM = new QLineEdit(frame_2);
+        lineEditTimerM->setObjectName(QStringLiteral("lineEditTimerM"));
+        lineEditTimerM->setGeometry(QRect(320, 20, 21, 20));
+        lblTimerT = new QLabel(frame_2);
+        lblTimerT->setObjectName(QStringLiteral("lblTimerT"));
+        lblTimerT->setGeometry(QRect(300, 50, 20, 20));
+        lineEditTimerT = new QLineEdit(frame_2);
+        lineEditTimerT->setObjectName(QStringLiteral("lineEditTimerT"));
+        lineEditTimerT->setGeometry(QRect(320, 50, 21, 20));
 
         horizontalLayout_2->addWidget(frame_2);
 
@@ -363,6 +379,8 @@ public:
         chk_flagHalfCarry->setText(QApplication::translate("MainWindow", "Half Carry", nullptr));
         chk_flagSubOp->setText(QApplication::translate("MainWindow", "Sub", nullptr));
         chk_flagZero->setText(QApplication::translate("MainWindow", "Zero", nullptr));
+        lblTimerM->setText(QApplication::translate("MainWindow", "m", nullptr));
+        lblTimerT->setText(QApplication::translate("MainWindow", "t", nullptr));
     } // retranslateUi
 
 };
@@ -373,4 +391,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // DEBUGWINDOWYJOFKS_H
+#endif // DEBUGWINDOWRLIOOG_H

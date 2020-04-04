@@ -7,7 +7,7 @@ if "%CurrDirName%" NEQ "build" (
   set "changecd=true"
 )
 
-conan install --build=missing -s build_type=Debug -s compiler.version=15 -s arch=x86_64 -pr ..\profile.py ..
+conan install --build=missing -s build_type=Debug -s compiler.version=15 -s arch=x86_64 -pr ..\profile.py -r bincrafters ..
 cmake -G "Visual Studio 15 2017 Win64" ..
 
 if "%changecd%" == "true" (

@@ -11,6 +11,7 @@
 #include "Instructions/Register.hpp"
 #include "Instructions/Interrupts.hpp"
 #include "Instructions/Compare.hpp"
+#include "Instructions/WriteAddress.hpp"
 
 #include "MemoryController.hpp"
 
@@ -23,7 +24,7 @@
 const std::map<unsigned char, Instruction> s_lookup = {
   { 0x00, Instruction("noop", 0x00, 1, 0, &Instructions::NoOp) },
   { 0x01, Instruction("ld bc", 0x01, 3, 3, std::bind(Instructions::LoadImmediate16, std::placeholders::_1, Register16::BC)) },
-  { 0x02, Instruction("ld (bc) a", 0x02, 1, 2, &Instructions::Placeholder) },
+  { 0x02, Instruction("ld (bc) a", 0x02, 1, 2, std::bind(Instructions::WriteAddress, std::placeholders::_1, Register16::BC, Register8::A)) },
   { 0x03, Instruction("inc bc", 0x03, 1, 2, std::bind(Instructions::Inc16, std::placeholders::_1, Register16::BC)) },
   { 0x04, Instruction("inc b", 0x04, 1, 1, std::bind(Instructions::Inc8, std::placeholders::_1, Register8::B)) },
   { 0x05, Instruction("dec b", 0x05, 1, 1, std::bind(Instructions::Dec8, std::placeholders::_1, Register8::B)) },
@@ -279,15 +280,17 @@ const std::map<unsigned char, Instruction> s_lookup = {
   { 0xff, Instruction("RST 38", 0xff, 1, 4, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
 };
 
-Cpu::Cpu(const std::shared_ptr<Cart> cart, std::shared_ptr<CpuStateNotifier> notifier)
+Cpu::Cpu(const std::shared_ptr<Cart> cart, std::shared_ptr<CpuStateNotifier> notifier,
+  std::shared_ptr<MemoryController> memoryController)
   :_cart(cart),
    _state(std::make_shared<cpu::State>()),
-   _clock(),
   _stateNotifier(std::move(notifier)),
   _running(true),
-  _stepping(true) {
+  _stepping(true),
+  _breakpoint_hit(false),
+  _history(std::make_shared<cpu::StateHistory>(50)),
+  _memoryController(memoryController) {
 
-  _memoryController = std::make_shared<MemoryController>();
   _stateNotifier->NotifyState(*_state, _history);
 }
 
@@ -295,10 +298,12 @@ void Cpu::Step()
 {
   if (_debug.IsPCTargetReached(_state->_pc)) {
     _stepping = true;
+    _breakpoint_hit = true;
   }
 
   if (_debug.TestRegBreakTargets(*_state)) {
     _stepping = true;
+    _breakpoint_hit = true;
   }
 
   unsigned char code = _cart->ReadByte(_state->_pc);
@@ -316,9 +321,10 @@ void Cpu::Step()
 
   _state->_history.push_back(instruction);
 
-  _history.push_back(std::make_pair(instruction, *_state));
+  _history->push_back(std::make_pair(instruction, *_state));
 
-  if (_stepping)
+  // TODO: record history sent + only send new history
+  if (_stepping || _breakpoint_hit)
     _stateNotifier->NotifyState(*_state, _history);
 }
 
@@ -519,19 +525,19 @@ void Cpu::ClearFlag(cpu::Flag flag)
 {
   switch (flag) {
     case cpu::Flag::Carry:
-      _state->_flag &= !0x10;
+      _state->_flag &= ~0x10;
       break;
 
     case cpu::Flag::HalfCarry:
-      _state->_flag &= !0x20;
+      _state->_flag &= ~0x20;
       break;
 
     case cpu::Flag::SubOp:
-      _state->_flag &= !0x40;
+      _state->_flag &= ~0x40;
       break;
 
     case cpu::Flag::Zero:
-      _state->_flag &= !0x80;
+      _state->_flag &= ~0x80;
       break;
 
     default:
@@ -598,9 +604,24 @@ void Cpu::DisableInterrupts()
   _state->DisableInterrupts();
 }
 
+bool Cpu::BreakpointHit() const 
+{
+  return _breakpoint_hit;
+}
+
+void Cpu::ResetBreakpointFlag()
+{
+  _breakpoint_hit = false;
+}
+
+std::shared_ptr<cpu::State> Cpu::GetState() {
+  return _state;
+}
+
 void Cpu::AdvanceState(const Instruction& instruction)
 {
-  _state->_pc += instruction.GetPCAdvance();
-  _numCycles += instruction.GetCycles() * 4;
-  _clock._m += instruction.GetCycles();
+  _state->_pc += instruction.GetPCAdvance();  
+
+  _state->_clock._m += instruction.GetCycles();
+  _state->_clock._t += instruction.GetCycles() * 4;
 }

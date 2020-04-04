@@ -3,8 +3,10 @@
 #include <string>
 #include <CpuStateNotifierQt.hpp>
 #include <Cpu.hpp>
+#include <Gpu.hpp>
 #include <Cart.hpp>
 #include <RunSpeed.hpp>
+#include <MemoryController.hpp>
 
 #include <thread>
 #include <mutex>
@@ -32,8 +34,10 @@ public:
 
 private:
   std::mutex _lock;
+  std::shared_ptr<MemoryController> _memoryController;
   std::shared_ptr<Cart> _cart;
   std::shared_ptr<Cpu> _cpu;
+  std::shared_ptr<Gpu> _gpu;
   std::shared_ptr<CpuStateNotifierQt> _stateNotifier;
 
   std::thread _runThread;

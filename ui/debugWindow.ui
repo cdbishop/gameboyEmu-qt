@@ -723,6 +723,52 @@
           <string>Zero</string>
          </property>
         </widget>
+        <widget class="QLabel" name="lblTimerM">
+         <property name="geometry">
+          <rect>
+           <x>300</x>
+           <y>20</y>
+           <width>20</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>m</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEditTimerM">
+         <property name="geometry">
+          <rect>
+           <x>320</x>
+           <y>20</y>
+           <width>21</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="lblTimerT">
+         <property name="geometry">
+          <rect>
+           <x>300</x>
+           <y>50</y>
+           <width>20</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>t</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEditTimerT">
+         <property name="geometry">
+          <rect>
+           <x>320</x>
+           <y>50</y>
+           <width>21</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
        </widget>
       </item>
      </layout>

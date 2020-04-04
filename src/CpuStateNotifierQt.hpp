@@ -19,7 +19,7 @@ public:
 
   CpuStateNotifierQt(DebugWindow* window);
 
-  void NotifyState(const cpu::State& state, const cpu::StateHistory& history);
+  void NotifyState(const cpu::State& state, std::shared_ptr<const cpu::StateHistory> history);
   void NotifyRomData(const std::vector<Cpu::RomInstruction>& instructions);
 
 signals:
