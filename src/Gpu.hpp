@@ -14,7 +14,7 @@ public:
     VBlank
   };
 
-  explicit Gpu(std::shared_ptr<MemoryController> memoryController);
+  explicit Gpu();
 
   void Reset();
   void Step(std::shared_ptr<Cpu> cpu);
@@ -27,7 +27,6 @@ private:
   void UpdateTile(unsigned short address, unsigned char value);
 
 private:
-  std::shared_ptr<MemoryController> _memoryController;
   Mode _mode;
   int _clock;
   int _scanline;

@@ -9,10 +9,10 @@ Manager::Manager(std::shared_ptr<CpuStateNotifierQt> notifier)
 }
 
 void Manager::LoadFile(const std::string& file) {
-  _cart = std::make_shared<Cart>(file);
-  _memoryController = std::make_shared<MemoryController>();
+  _cart = std::make_shared<Cart>(file);  
   _cpu = std::make_shared<Cpu>(_cart, _stateNotifier, _memoryController);
-  _gpu = std::make_shared<Gpu>(_memoryController);
+  _gpu = std::make_shared<Gpu>();
+  _memoryController = std::make_shared<MemoryController>(_gpu);
 
   auto rom_instructions = _cpu->DumpRom();
   _stateNotifier->NotifyRomData(rom_instructions);

@@ -1,7 +1,6 @@
 #include <Gpu.hpp>
 
-Gpu::Gpu(std::shared_ptr<MemoryController> memoryController)
-  :_memoryController(memoryController) {
+Gpu::Gpu() {
 }
 
 void Gpu::Reset() {
