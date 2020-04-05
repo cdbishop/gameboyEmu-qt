@@ -2,6 +2,7 @@
 
 #include "Cart.hpp"
 #include "Cpu.hpp"
+#include "Gpu.hpp"
 #include "DebugWindow.hpp"
 
 #include <qmenubar.h>
@@ -16,11 +17,11 @@ RenderWindow::RenderWindow(std::shared_ptr<cpu::Manager> cpuManager, DebugWindow
   :QWidget(parent),
    _cpuManager(cpuManager),
   _debugWindow(debugWindow) {
-  
-  _canvasTest = new SFMLCanvasTest(this, QPoint(0, 0), QSize(360, 360));
-  _canvasTest->show();
 
-  resize(QSize(360, 360));
+  _renderBuffer = new SFMLBuffer(this, QPoint(0, 0), QSize(gpu::Width, gpu::Height));
+  _renderBuffer->show();
+
+  resize(QSize(gpu::Width, gpu::Height));
 
   _openAction = new QAction(tr("&New"), this);
   _openAction->setStatusTip(tr("Open rom file"));
@@ -66,6 +67,14 @@ void RenderWindow::CpuPause()
   _cpuManager->Pause();
 }
 
+void RenderWindow::SetStateNotifier(std::shared_ptr<CpuStateNotifierQt> notifier) {
+  bool ret = connect(notifier.get(), &CpuStateNotifierQt::NotifyScreenDataSignal, this, &RenderWindow::OnNotifyScreenDataSignal);
+}
+
+void RenderWindow::OnNotifyScreenDataSignal(const gpu::ScreenData& data) {
+  _renderBuffer->Draw(data);
+}
+
 void RenderWindow::OnNext()
 {
   spdlog::get("console")->debug("Recieved Next Signal from debug");
@@ -95,5 +104,7 @@ void RenderWindow::OnRemoveRegBreak(const std::string& regValue)
 
 void RenderWindow::OpenFile()
 {
-  _cpuManager->LoadFile("roms\\tetris.gb");
+  //_cpuManager->LoadFile("roms\\tetris.gb");
+  _cpuManager->LoadFile("roms\\opusgames_test1.gb");
+  //_cpuManager->LoadFile("roms\\01-special.gb");
 }

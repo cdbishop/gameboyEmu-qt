@@ -47,6 +47,11 @@ void CpuStateNotifierQt::NotifyRomData(const std::vector<Cpu::RomInstruction>& i
   _notifyCv.notify_one();
 }
 
+void CpuStateNotifierQt::NotifyScreenData(const gpu::ScreenData& data) {
+  _updateFlag |= UpdateFlag_Screen;
+  _screenData = data;
+}
+
 void CpuStateNotifierQt::ThreadMain() {
   while (_threadRunning) {
     std::unique_lock lk(_notifyMutex);
@@ -60,6 +65,9 @@ void CpuStateNotifierQt::ThreadMain() {
 
     if (_updateFlag & UpdateFlag_RomData)
       emit NotifyRomDataSignal(_nextInstructionState);
+
+    if (_updateFlag & UpdateFlag_Screen)
+      emit NotifyScreenDataSignal(_screenData);
 
     _notified = false;
     _updateFlag = 0;

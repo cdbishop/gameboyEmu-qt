@@ -3,10 +3,12 @@
 #include <QtWidgets/qwidget.h>
 #include <QtWidgets/qmenu.h>
 
-#include "SFMLCanvasTest.hpp"
+//#include "SFMLCanvasTest.hpp"
+#include "SFMLBuffer.hpp"
 #include "CpuStateNotifierQt.hpp"
 #include "CpuManager.hpp"
 #include "RunSpeed.hpp"
+#include "gpu/ScreenData.hpp"
 
 class Cart;
 class Cpu;
@@ -22,6 +24,11 @@ public:
   void CpuRun(RunSpeed speed);
   void CpuPause();
 
+  void SetStateNotifier(std::shared_ptr<CpuStateNotifierQt> notifier);
+
+private:
+  void OnNotifyScreenDataSignal(const gpu::ScreenData& data);
+
 private slots:
   void OpenFile();
   void OnNext();
@@ -31,7 +38,7 @@ private slots:
   void OnRemoveRegBreak(const std::string& regValue);
 
 private:
-  SFMLCanvasTest* _canvasTest;
+  SFMLBuffer* _renderBuffer;
   
   QMenuBar* _fileMenu;
   QAction* _openAction;

@@ -37,7 +37,13 @@ void MemoryController::WriteByte(unsigned short address, unsigned char value)
       break;
 
     case AddressRange::IO:
-      throw std::runtime_error("not implemented");
+      switch (address & 0x00F0) {
+        case 0x40:
+        case 0x50:
+        case 0x60:
+        case 0x70:
+          _gpu->WriteRegister(address, value);
+      }
       break;
 
     case AddressRange::ERAM:
@@ -49,7 +55,7 @@ void MemoryController::WriteByte(unsigned short address, unsigned char value)
       break;
 
     case AddressRange::ZRAM:
-      _wram[address & 0x7F] = value;
+      _zram[address & 0x7F] = value;
       break;
     
     default:
@@ -60,16 +66,17 @@ void MemoryController::WriteByte(unsigned short address, unsigned char value)
 
 void MemoryController::WriteWord(unsigned short address, unsigned short value)
 {
+  throw std::runtime_error("Not implemented!");
 }
 
 unsigned char MemoryController::ReadByte(unsigned short address)
 {
-  return 0;
+  throw std::runtime_error("Not implemented!");
 }
 
 unsigned short MemoryController::ReadWord(unsigned short address)
 {
-  return 0;
+  throw std::runtime_error("Not implemented!");
 }
 
 MemoryController::AddressRange MemoryController::GetAddressRange(unsigned short address)

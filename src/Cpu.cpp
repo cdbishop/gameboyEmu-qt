@@ -12,6 +12,7 @@
 #include "Instructions/Interrupts.hpp"
 #include "Instructions/Compare.hpp"
 #include "Instructions/WriteAddress.hpp"
+#include "Instructions/Sub.hpp"
 
 #include "MemoryController.hpp"
 
@@ -71,7 +72,7 @@ const std::map<unsigned char, Instruction> s_lookup = {
   { 0x2e, Instruction("LD L n", 0x2e, 2, 2, std::bind(Instructions::LoadImmediate8, std::placeholders::_1, Register8::L)) },
   { 0x2f, Instruction("CPL", 0x2f, 1, 1, &Instructions::Placeholder) },
   { 0x30, Instruction("jr nc {lower}", 0x30, 2, 2, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
-  { 0x31, Instruction("LD SP nn", 0x3a, 3, 3, &Instructions::Placeholder) },
+  { 0x31, Instruction("LD SP nn", 0x31, 3, 3, std::bind(Instructions::LoadImmediate16, std::placeholders::_1, Register16::SP)) },
   { 0x32, Instruction("ldd hl", 0x32, 1, 2, std::bind(Instructions::WriteToAddressAndDec, std::placeholders::_1, Register8::A, Register16::HL)) },
   { 0x33, Instruction("INC SP", 0x33, 2, 2, &Instructions::Placeholder) },
   { 0x34, Instruction("INC (HL)", 0x34, 2, 2, &Instructions::Placeholder) },
@@ -166,14 +167,14 @@ const std::map<unsigned char, Instruction> s_lookup = {
   { 0x8d, Instruction("ADC A L", 0x8d, 1, 1, &Instructions::Placeholder) },
   { 0x8e, Instruction("ADC A (HL)", 0x8e, 1, 2, &Instructions::Placeholder) },
   { 0x8f, Instruction("ADC A A", 0x8f, 1, 1, &Instructions::Placeholder) },
-  { 0x90, Instruction("SUB A B", 0x90, 1, 1, &Instructions::Placeholder) },
-  { 0x91, Instruction("SUB A C", 0x91, 1, 1, &Instructions::Placeholder) },
-  { 0x92, Instruction("SUB A D", 0x92, 1, 1, &Instructions::Placeholder) },
-  { 0x93, Instruction("SUB A E", 0x93, 1, 1, &Instructions::Placeholder) },
-  { 0x94, Instruction("SUB A H", 0x94, 1, 1, &Instructions::Placeholder) },
-  { 0x95, Instruction("SUB A L", 0x95, 1, 1, &Instructions::Placeholder) },
+  { 0x90, Instruction("SUB A B", 0x90, 1, 1, std::bind(Instructions::Sub, std::placeholders::_1, Register8::A, Register8::B)) },
+  { 0x91, Instruction("SUB A C", 0x91, 1, 1, std::bind(Instructions::Sub, std::placeholders::_1, Register8::A, Register8::C)) },
+  { 0x92, Instruction("SUB A D", 0x92, 1, 1, std::bind(Instructions::Sub, std::placeholders::_1, Register8::A, Register8::D)) },
+  { 0x93, Instruction("SUB A E", 0x93, 1, 1, std::bind(Instructions::Sub, std::placeholders::_1, Register8::A, Register8::E)) },
+  { 0x94, Instruction("SUB A H", 0x94, 1, 1, std::bind(Instructions::Sub, std::placeholders::_1, Register8::A, Register8::H)) },
+  { 0x95, Instruction("SUB A L", 0x95, 1, 1, std::bind(Instructions::Sub, std::placeholders::_1, Register8::A, Register8::L)) },
   { 0x96, Instruction("SUB A (HL)", 0x96, 1, 2, &Instructions::Placeholder) },
-  { 0x97, Instruction("SUB A A", 0x97, 1, 1, &Instructions::Placeholder) },
+  { 0x97, Instruction("SUB A A", 0x97, 1, 1, std::bind(Instructions::Sub, std::placeholders::_1, Register8::A, Register8::A)) },
   { 0x98, Instruction("SBC A B", 0x98, 1, 1, &Instructions::Placeholder) },
   { 0x99, Instruction("SBC A C", 0x99, 1, 1, &Instructions::Placeholder) },
   { 0x9a, Instruction("SBC A D", 0x9a, 1, 1, &Instructions::Placeholder) },
@@ -227,7 +228,7 @@ const std::map<unsigned char, Instruction> s_lookup = {
   { 0xca, Instruction("JP Z nn", 0xca, 3, 3, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
   { 0xcb, Instruction("extended", 0xcb, 1, 0, &Instructions::Placeholder) },
   { 0xcc, Instruction("CALL Z nn", 0xcc, 3, 3, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
-  { 0xcd, Instruction("CALL nn", 0xcd, 3, 3, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
+  { 0xcd, Instruction("CALL nn", 0xcd, 3, 6, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
   { 0xce, Instruction("ADC A n", 0xce, 2, 2, &Instructions::Placeholder) },
   { 0xcf, Instruction("RST 8", 0xcf, 2, 4, &Instructions::Placeholder, Instruction::OpOrder::Pre) },
   { 0xd0, Instruction("RET NC", 0xd0, 1, 2, &Instructions::Placeholder, Instruction::OpOrder::Pre) },

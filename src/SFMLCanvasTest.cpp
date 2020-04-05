@@ -1,6 +1,6 @@
 #include "SFMLCanvasTest.hpp"
 
-SFMLCanvasTest::SFMLCanvasTest(QWidget * parent, const QPoint & position, const QSize & size)
+SFMLCanvasTest::SFMLCanvasTest(QWidget* parent, const QPoint& position, const QSize& size)
   :SFMLCanvas(parent, position, size)
 {
 }

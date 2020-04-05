@@ -1,6 +1,22 @@
 #include <Gpu.hpp>
 
-Gpu::Gpu() {
+const std::array<unsigned char, 4> PixelWhite = { 255,255,255,255 };
+const std::array<unsigned char, 4> PixelLightGrey = { 192,192,192,255 };
+const std::array<unsigned char, 4> PixelDarkGrey = { 96,96,96,255 };
+const std::array<unsigned char, 4> PixelBlack = { 0,0,0,255 };
+
+Gpu::Gpu(std::shared_ptr<CpuStateNotifier> notifier)
+  :_notifier(notifier),
+   _mode(Mode::OamRead),
+   _clock(0),
+   _scanline(0),
+   _scx(0),
+   _scy(0),
+   _bgmap(false),
+   _bgtile(false),
+   _switchBg(false),
+   _switchLcd(false) {
+  Reset();
 }
 
 void Gpu::Reset() {
@@ -17,6 +33,12 @@ void Gpu::Reset() {
   _bgmap = false;
 
   //todo: notify screen data
+  _notifier->NotifyScreenData(_screen);
+
+  _pallets[0] = PixelWhite;
+  _pallets[1] = PixelLightGrey;
+  _pallets[2] = PixelDarkGrey;
+  _pallets[3] = PixelBlack;
 }
 
 void Gpu::Step(std::shared_ptr<Cpu> cpu) {
@@ -47,6 +69,7 @@ void Gpu::Step(std::shared_ptr<Cpu> cpu) {
         if (_scanline == 143) {
           _mode = Mode::VBlank;
           // do something with screen data?
+          _notifier->NotifyScreenData(_screen);
         } else {
           _mode = Mode::OamRead;
         }
@@ -76,6 +99,70 @@ unsigned char Gpu::ReadVRAMByte(unsigned short address) {
   return _vram[address];
 }
 
+void Gpu::WriteRegister(unsigned short address, unsigned char value) {
+  switch (address) {
+    case 0xFF40:
+      _switchBg = (value & 0x01);
+      _bgmap = (value & 0x08);
+      _bgtile = (value & 0x10);
+      _switchLcd = (value & 0x80);
+      break;
+
+    case 0xFF42:
+      _scy = value;
+      break;
+
+    case 0xFF43:
+      _scx = value;
+      break;
+
+    case 0xFF47:
+      for (int i = 0; i < 4; ++i) {
+        switch ((value >> (i * 2)) & 3) {
+          case 0:
+            _pallets[i] = PixelWhite;
+            break;
+
+          case 1:
+            _pallets[i] = PixelLightGrey;
+            break;
+
+          case 2:
+            _pallets[i] = PixelDarkGrey;
+            break;
+
+          case 3:
+            _pallets[i] = PixelBlack;
+            break;
+        }
+      }
+      break;
+  }
+}
+
+unsigned char Gpu::ReadRegister(unsigned short address) {
+  switch (address) {
+    case 0xFF40:
+      return (_switchBg ? 0x01 : 0x00) |
+        (_bgmap ? 0x08 : 0x00) |
+        (_bgtile ? 0x10 : 0x00) |
+        (_switchLcd ? 0x80 : 0x00);
+      break;
+
+    case 0xFF42:
+      return _scy;
+      break;
+
+    case 0xFF43:
+      return _scx;
+      break;
+
+    case 0xFF44:
+      return _scanline;
+      break;
+  }
+}
+
 void Gpu::RenderScanline() {
   //Get VRAM offset for the tilemap
   int map_offset = _bgmap ? 0x1c00 : 0x1800;
@@ -96,24 +183,11 @@ void Gpu::RenderScanline() {
     int tile_value = _tileset[tile][y];
     int pallet_idx = (tile_value >> (7 - x));
     int colour = 0;
-    switch (pallet_idx) {
-      case 0:
-        colour = 0xFFFFFFFF;
-        break;
-
-      case 1:
-        colour = 0xC0C0C0FF;
-        break;
-
-      case 2:
-        colour = 0x606060FF;
-        break;
-
-      case 3:
-        colour = 0;
-        break;
-    }
-
+    colour |= _pallets[pallet_idx][0] << 24;
+    colour |= _pallets[pallet_idx][1] << 16;
+    colour |= _pallets[pallet_idx][2] << 8;
+    colour |= _pallets[pallet_idx][3];
+        
     _screen[y][x] = colour;
 
     ++x;
