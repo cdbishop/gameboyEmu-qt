@@ -18,10 +18,11 @@ public:
   typedef std::function<void(Cpu*)> ExecuteFn;
 
   Instruction();
-  Instruction(std::string instruction, int code, unsigned int pcAdvance, int cycles, ExecuteFn impl, OpOrder opOrder = OpOrder::Post);  
+  Instruction(std::string instruction, int code, unsigned int pcAdvance, int cycles, int size, ExecuteFn impl, OpOrder opOrder = OpOrder::Post);  
 
   int GetPCAdvance() const;
   int GetCycles() const;
+  int GetSize() const;
   OpOrder GetOpOrder() const;
 
   void Execute(Cpu*) const;
@@ -36,6 +37,7 @@ private:
   int _code;
   unsigned int _pcAdvance;
   unsigned int _cycles;
+  unsigned int _size;
   ExecuteFn _implFn;
   OpOrder  _opOrder;
 };

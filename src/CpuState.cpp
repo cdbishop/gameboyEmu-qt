@@ -54,9 +54,14 @@ namespace cpu {
         return _h << 8 | _l;
         break;
 
+      case Register16::AF:
+        return _a << 8 | _flag;
+        break;
+
       case Register16::SP:
         return _sp;
         break;
+      
 
       default:
         throw std::runtime_error("Unknown register");

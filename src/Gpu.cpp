@@ -99,6 +99,24 @@ unsigned char Gpu::ReadVRAMByte(unsigned short address) {
   return _vram[address];
 }
 
+void Gpu::WriteVRAMWord(unsigned short address, unsigned short value) {
+  auto lo = value & 0xFF;
+  auto hi = value >> 8;
+
+  _vram[address] = lo;
+  _vram[address+1] = hi;
+
+  // TODO: is this needed?
+  UpdateTile(address, lo);
+  UpdateTile(address+1, hi);
+}
+
+unsigned char Gpu::ReadVRAMWord(unsigned short address) {
+  unsigned short value = ((unsigned short)_vram[address]) << 8;
+  value |= _vram[address + 1];
+  return value;
+}
+
 void Gpu::WriteRegister(unsigned short address, unsigned char value) {
   switch (address) {
     case 0xFF40:

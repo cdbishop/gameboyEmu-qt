@@ -24,6 +24,7 @@ public:
   std::vector<RomInstruction> DumpRom();
 
   unsigned char ReadByteOffset(unsigned int offset);
+  unsigned short ReadWordOffset(unsigned int offset);
 
   void SetPC(unsigned int address);
   unsigned int GetPC() const;

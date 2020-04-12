@@ -66,17 +66,163 @@ void MemoryController::WriteByte(unsigned short address, unsigned char value)
 
 void MemoryController::WriteWord(unsigned short address, unsigned short value)
 {
-  throw std::runtime_error("Not implemented!");
+  auto range = GetAddressRange(address);
+  auto lo = value & 0xFF;
+  auto hi = value >> 8;
+
+  switch (range) {
+  case AddressRange::BIOS:
+    throw std::runtime_error("not implemented");
+    if (_inbios) {
+      //TODO:
+    }
+  case AddressRange::ROM0:
+  case AddressRange::ROM1:
+    _rom[address] = lo;
+    _rom[address + 1] = hi;
+    break;
+
+  case AddressRange::VRAM:
+    _gpu->WriteVRAMWord(address & 0x1FFF, value);
+    break;
+
+  case AddressRange::OAM:
+    throw std::runtime_error("not implemented");
+    break;
+
+  case AddressRange::IO:
+    throw std::runtime_error("not implemented");
+    break;
+
+  case AddressRange::ERAM:
+    _rom[address & 0x1FFF] = lo;
+    _rom[(address + 1) & 0x1FFF] = hi;
+    break;
+
+  case AddressRange::WRAM:
+    _wram[address & 0x1FFF] = lo;
+    _wram[(address + 1) & 0x1FFF] = hi;
+    break;
+
+  case AddressRange::ZRAM:
+    _zram[address & 0x7F] = lo;
+    _zram[(address + 1) & 0x7F] = hi;
+    break;
+
+  default:
+    throw std::runtime_error("Unhandled enum case");
+    break;
+  }
 }
 
 unsigned char MemoryController::ReadByte(unsigned short address)
 {
-  throw std::runtime_error("Not implemented!");
+  auto range = GetAddressRange(address);
+  switch (range) {
+  case AddressRange::BIOS:
+    throw std::runtime_error("not implemented");
+    if (_inbios) {
+      //TODO:
+    }
+  case AddressRange::ROM0:
+  case AddressRange::ROM1:
+    return _rom[address];
+    break;
+
+  case AddressRange::VRAM:
+    return _gpu->ReadVRAMByte(address & 0x1FFF);
+    break;
+
+  case AddressRange::OAM:
+    throw std::runtime_error("not implemented");
+    break;
+
+  case AddressRange::IO:
+    switch (address & 0x00F0) {
+    case 0x40:
+    case 0x50:
+    case 0x60:
+    case 0x70:
+      return _gpu->ReadRegister(address);
+    }
+    break;
+
+  case AddressRange::ERAM:
+    return _eram[address & 0x1FFF];
+    break;
+
+  case AddressRange::WRAM:
+    return _wram[address & 0x1FFF];
+    break;
+
+  case AddressRange::ZRAM:
+    return _zram[address & 0x7F];
+    break;
+
+  default:
+    throw std::runtime_error("Unhandled enum case");
+    break;
+  }
 }
 
 unsigned short MemoryController::ReadWord(unsigned short address)
 {
-  throw std::runtime_error("Not implemented!");
+  auto range = GetAddressRange(address);
+  switch (range) {
+  case AddressRange::BIOS:
+    throw std::runtime_error("not implemented");
+    if (_inbios) {
+      //TODO:
+    }
+  case AddressRange::ROM0:
+  case AddressRange::ROM1:
+    {
+      unsigned short value = (_rom[address] << 8);
+      value |= _rom[address + 1];
+      return value;
+    }
+    break;
+
+  case AddressRange::VRAM:
+    return _gpu->ReadVRAMWord(address & 0x1FFF);
+    break;
+
+  case AddressRange::OAM:
+    throw std::runtime_error("not implemented");
+    break;
+
+  case AddressRange::IO:
+    throw std::runtime_error("not implemented");
+    break;
+
+  case AddressRange::ERAM:
+    {
+      unsigned short value = (_eram[address & 0x1FFF] << 8);
+      value |= _eram[address & 0x1FFF];
+      return value;
+    }
+    break;
+
+  case AddressRange::WRAM:
+    {
+      unsigned short value = (_wram[address & 0x1FFF] << 8);
+      value |= _wram[address & 0x1FFF];
+      return value;
+    }
+    break;
+
+  case AddressRange::ZRAM:
+    {
+      unsigned short value = (_zram[address & 0x7F] << 8);
+      value |= _zram[address & 0x7F];
+      return value;
+    }
+    break;
+
+  default:
+    throw std::runtime_error("Unhandled enum case");
+    break;
+  }
 }
 
 MemoryController::AddressRange MemoryController::GetAddressRange(unsigned short address)

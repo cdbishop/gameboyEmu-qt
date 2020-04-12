@@ -24,6 +24,9 @@ public:
   void WriteVRAMByte(unsigned short address, unsigned char value);
   unsigned char ReadVRAMByte(unsigned short address);
 
+  void WriteVRAMWord(unsigned short address, unsigned short value);
+  unsigned char ReadVRAMWord(unsigned short address);
+
   void WriteRegister(unsigned short address, unsigned char value);
   unsigned char ReadRegister(unsigned short address);
 

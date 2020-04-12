@@ -12,6 +12,7 @@ enum class Register8 {
 };
 
 enum class Register16 {
+  AF,
   BC,
   DE,
   HL,

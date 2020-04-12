@@ -44,6 +44,9 @@ Register16 Register16FromString(const std::string& str) {
     case 'S':
       return Register16::SP;
 
+    case 'A':
+      return Register16::AF;
+
     default:
       throw std::invalid_argument("Unknown register");
   }

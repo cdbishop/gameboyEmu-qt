@@ -1,19 +1,16 @@
 #include "Compare.hpp"
 #include "Cpu.hpp"
+#include "MemoryController.hpp"
 
 #include <stdexcept>
 
-void Instructions::CompareRegisterImmediate(Cpu * cpu, Register8 src)
-{
-  unsigned char srcValue = cpu->GetRegister(src);
-  unsigned char immediate = cpu->ReadByteOffset(1);
+void PerformCompare(Cpu* cpu, unsigned char lhs, unsigned char rhs) {
+  short signed_lhs = static_cast<short>(lhs);
+  short signed_rhs = static_cast<short>(rhs);
 
-  short signed_src = static_cast<short>(srcValue);
-  short signed_immediate = static_cast<short>(immediate);
-
-  short result = signed_src - signed_immediate;
-
-  if ((signed_src & 0xF) - (signed_immediate & 0xF) < 0) {
+  short result = signed_lhs - signed_rhs;
+  
+  if ((signed_lhs & 0xF) - (signed_rhs & 0xF) < 0) {
     cpu->SetFlag(cpu::Flag::HalfCarry);
   } else {
     cpu->ClearFlag(cpu::Flag::HalfCarry);
@@ -32,4 +29,27 @@ void Instructions::CompareRegisterImmediate(Cpu * cpu, Register8 src)
   } else {
     cpu->ClearFlag(cpu::Flag::Zero);
   }
+}
+
+void Instructions::CompareRegisterImmediate(Cpu* cpu, Register8 src)
+{
+  unsigned char srcValue = cpu->GetRegister(src);
+  unsigned char immediate = cpu->ReadByteOffset(1);
+
+  PerformCompare(cpu, srcValue, immediate);
+}
+
+void Instructions::CompareRegister(Cpu* cpu, Register8 src, Register8 target) {
+  unsigned char srcValue = cpu->GetRegister(src);
+  unsigned char targetValue = cpu->GetRegister(target);
+
+  PerformCompare(cpu, srcValue, targetValue);
+}
+
+void Instructions::CompareAddressRegister(Cpu* cpu, Register8 src, Register16 targetAddress) {
+  unsigned char srcValue = cpu->GetRegister(src);
+  unsigned short address = cpu->GetRegister(targetAddress);
+  unsigned char targetValue = cpu->GetMemoryController()->ReadByte(address);
+
+  PerformCompare(cpu, srcValue, targetValue);
 }
