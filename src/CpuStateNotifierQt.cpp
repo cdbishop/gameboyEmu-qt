@@ -15,15 +15,17 @@ CpuStateNotifierQt::CpuStateNotifierQt(DebugWindow* window)
 {
   qRegisterMetaType<Cpu::RomInstruction>("CpuRomInstruction");
   qRegisterMetaType<cpu::State>("cpu::State");
+  qRegisterMetaType<gpu::ScreenData>("gpu::ScreenData");
   qRegisterMetaType<cpu::StateHistory>("cpu::StateHistory");
   qRegisterMetaType<std::vector<Cpu::RomInstruction>>("std::vector<Cpu::RomInstruction>");
+  qRegisterMetaType<gpu::TilesetDump>("gpu::TilesetDump");
 }
 
 void CpuStateNotifierQt::NotifyState(const cpu::State& state, std::shared_ptr<const cpu::StateHistory> history)
 {
+  std::unique_lock lk(_notifyMutex);
   _updateFlag |= UpdateFlag_State;
 
-  std::unique_lock lk(_notifyMutex);  
   _nextState = state;
   //_nextStateHistory = history;
 
@@ -39,17 +41,33 @@ void CpuStateNotifierQt::NotifyState(const cpu::State& state, std::shared_ptr<co
 
 void CpuStateNotifierQt::NotifyRomData(const std::vector<Cpu::RomInstruction>& instructions)
 {
+  std::unique_lock lk(_notifyMutex);
   _updateFlag |= UpdateFlag_RomData;
 
-  std::unique_lock lk(_notifyMutex);  
+ 
   _nextInstructionState = instructions;
   _notified = true;
   _notifyCv.notify_one();
 }
 
 void CpuStateNotifierQt::NotifyScreenData(const gpu::ScreenData& data) {
+  std::unique_lock lk(_notifyMutex);
+
   _updateFlag |= UpdateFlag_Screen;
+
   _screenData = data;
+  _notified = true;
+  _notifyCv.notify_one();  
+}
+
+void CpuStateNotifierQt::NotifyTilesetData(const gpu::TilesetDump& data) {
+  std::unique_lock lk(_notifyMutex);
+
+  _updateFlag |= UpdateFlag_TilesetDebug;
+
+  _tilesetData = data;
+  _notified = true;
+  _notifyCv.notify_one();
 }
 
 void CpuStateNotifierQt::ThreadMain() {
@@ -68,6 +86,9 @@ void CpuStateNotifierQt::ThreadMain() {
 
     if (_updateFlag & UpdateFlag_Screen)
       emit NotifyScreenDataSignal(_screenData);
+
+    if (_updateFlag & UpdateFlag_TilesetDebug)
+      emit NotifyTileDataSignal(_tilesetData);
 
     _notified = false;
     _updateFlag = 0;

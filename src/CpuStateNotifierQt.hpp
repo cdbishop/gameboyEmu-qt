@@ -18,6 +18,7 @@ public:
     UpdateFlag_State = 1 << 1,
     UpdateFlag_RomData = 1 << 2,
     UpdateFlag_Screen = 1 << 3,
+    UpdateFlag_TilesetDebug = 1 << 4,
   };
 
   CpuStateNotifierQt(DebugWindow* window);
@@ -25,11 +26,13 @@ public:
   void NotifyState(const cpu::State& state, std::shared_ptr<const cpu::StateHistory> history);
   void NotifyRomData(const std::vector<Cpu::RomInstruction>& instructions);
   void NotifyScreenData(const gpu::ScreenData& data);
+  void NotifyTilesetData(const gpu::TilesetDump& data);
 
 signals:
   void NotifyStateSignal(const cpu::State& state, const cpu::StateHistory& history);
   void NotifyRomDataSignal(const std::vector<Cpu::RomInstruction>& instructions);
   void NotifyScreenDataSignal(const gpu::ScreenData& data);
+  void NotifyTileDataSignal(const gpu::TilesetDump& data);
 
 private:
   void ThreadMain();
@@ -50,4 +53,6 @@ private:
 
   std::thread _notifyThread;
   int _updateFlag;
+
+  gpu::TilesetDump _tilesetData;
 };
