@@ -43,6 +43,7 @@ private:
   std::thread _runThread;
   std::atomic<bool> _threadRunning;
   RunSpeed _currentRunSpeed;
+  unsigned int _clocksPerFrame;
 };
 
 }

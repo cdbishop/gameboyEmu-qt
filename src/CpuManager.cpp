@@ -3,9 +3,15 @@
 
 namespace cpu {
 
+static const unsigned int ClocksPerScanline = 456;
+static const unsigned int VBlankLines = 10;
+
 Manager::Manager(std::shared_ptr<CpuStateNotifierQt> notifier)
   :_stateNotifier(notifier),
    _threadRunning(false) {
+
+  _clocksPerFrame = gpu::Height * ClocksPerScanline;
+  _clocksPerFrame += (VBlankLines * ClocksPerScanline);
 }
 
 void Manager::LoadFile(const std::string& file) {
@@ -21,6 +27,8 @@ void Manager::LoadFile(const std::string& file) {
   _runThread = std::thread([&]() {
     while (true) {
       while (_threadRunning && _cpu->Running()) {
+        auto curFrameClock = _cpu->GetState()->_clock._t + _clocksPerFrame;
+
         if (_currentRunSpeed == RunSpeed::Stepping)
           std::this_thread::sleep_for(std::chrono::seconds(1));
         else
@@ -36,6 +44,13 @@ void Manager::LoadFile(const std::string& file) {
         }
 
         _cpu->ResetBreakpointFlag();
+
+        _gpu->Step(_cpu);
+
+        //if (curFrameClock >= _cpu->GetState()->_clock._t) {
+        //  // draw a frame
+        //  _stateNotifier->NotifyScreenData()
+        //}
       }
     }
   });
