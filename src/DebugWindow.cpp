@@ -48,7 +48,7 @@ void DebugWindow::UpdateState(const cpu::State& state, const cpu::StateHistory& 
   
   for (auto i = 0; i < state._history.size(); ++i) {
     std::ostringstream ss;
-    ss << state._history[i];
+    ss << "[" << std::hex << state._history[i].first << "] " << state._history[i].second;
     ui.lst_History->addItem(QString(ss.str().c_str()));
   }
 

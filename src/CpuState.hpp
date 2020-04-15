@@ -58,7 +58,8 @@ public:
 
   bool _interruptsEnabled;
 
-  boost::circular_buffer<Instruction> _history;
+  //boost::circular_buffer<Instruction> _history;
+  boost::circular_buffer<std::pair<unsigned short, Instruction>> _history;
 
   unsigned int _numCycles;
   Clock _clock;

@@ -316,6 +316,7 @@ void Cpu::Step()
 
   unsigned char code = _cart->ReadByte(_state->_pc);
   const auto& instruction = s_lookup.at(code); 
+  const auto last_pc = _state->_pc;
 
   if (instruction.GetOpOrder() == Instruction::OpOrder::Pre) {
     AdvanceState(instruction);
@@ -327,13 +328,15 @@ void Cpu::Step()
     AdvanceState(instruction);
   }
 
-  _state->_history.push_back(instruction);
+  _state->_history.push_back(std::make_pair(last_pc, instruction));
 
   _history->push_back(std::make_pair(instruction, *_state));
 
   // TODO: record history sent + only send new history
   if (_stepping || _breakpoint_hit)
     _stateNotifier->NotifyState(*_state, _history);
+
+  spdlog::get("console")->debug("last pc: {}", last_pc);
 }
 
 std::vector<Cpu::RomInstruction> Cpu::DumpRom() {
