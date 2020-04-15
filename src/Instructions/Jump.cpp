@@ -17,30 +17,38 @@ void Instructions::JmpImmediate16_Zero(Cpu * cpu)
 {
   if (cpu->TestFlag(cpu::Flag::Zero)) {
     JmpImmediate16(cpu);
+  } else {
+    cpu->SetPC(cpu->GetPC() + 3);
   }
 }
 
 void Instructions::JmpImmediate16_NotZero(Cpu * cpu) 
 {
-  unsigned char upper = cpu->ReadByteOffset(1);
+  unsigned short upper = cpu->ReadWordOffset(1);
   if (!cpu->TestFlag(cpu::Flag::Zero)) {
-    cpu->SetPC(cpu->GetPC() + (char)upper);
+    cpu->SetPC(upper);
+  } else {
+    cpu->SetPC(cpu->GetPC() + 3);
   }
 }
 
 void Instructions::JmpImmediate16_Carry(Cpu * cpu) 
 {
-  unsigned char upper = cpu->ReadByteOffset(1);
+  unsigned short upper = cpu->ReadWordOffset(1);
   if (cpu->TestFlag(cpu::Flag::Carry)) {
-    cpu->SetPC(cpu->GetPC() + (char)upper);
+    cpu->SetPC(upper);
+  } else {
+    cpu->SetPC(cpu->GetPC() + 3);
   }
 }
 
 void Instructions::JmpImmediate16_NotCarry(Cpu * cpu) 
 {
-  unsigned char upper = cpu->ReadByteOffset(1);
+  unsigned short upper = cpu->ReadWordOffset(1);
   if (!cpu->TestFlag(cpu::Flag::Carry)) {
-    cpu->SetPC(cpu->GetPC() + (char)upper);
+    cpu->SetPC(upper);
+  } else {
+    cpu->SetPC(cpu->GetPC() + 3);
   }
 }
 
@@ -49,28 +57,36 @@ void Instructions::JmpRelative_NotZero(Cpu * cpu)
   unsigned char upper = cpu->ReadByteOffset(1);
   if (!cpu->TestFlag(cpu::Flag::Zero)) {
     cpu->SetPC(cpu->GetPC() + (char)upper);
+  } else {
+    cpu->SetPC(cpu->GetPC() + 2);
   }
 }
 
 void Instructions::JmpRelative_Zero(Cpu * cpu)
 {
-  unsigned short target = cpu->ReadWordOffset(1);
+  unsigned char upper = cpu->ReadByteOffset(1);
   if (cpu->TestFlag(cpu::Flag::Zero)) {
-    cpu->SetPC(target);
+    cpu->SetPC(cpu->GetPC() + (char)upper);
+  } else {
+    cpu->SetPC(cpu->GetPC() + 2);
   }
 }
 
 void Instructions::JmpRelative_NotCarry(Cpu * cpu) {
-  unsigned short target = cpu->ReadWordOffset(1);
+  unsigned char upper = cpu->ReadByteOffset(1);
   if (!cpu->TestFlag(cpu::Flag::Carry)) {
-    cpu->SetPC(target);
+    cpu->SetPC(cpu->GetPC() + (char)upper);
+  } else {
+    cpu->SetPC(cpu->GetPC() + 2);
   }
 }
 
 void Instructions::JmpRelative_Carry(Cpu * cpu) {
-  unsigned short target = cpu->ReadWordOffset(1);
+  unsigned char upper = cpu->ReadByteOffset(1);
   if (cpu->TestFlag(cpu::Flag::Carry)) {
-    cpu->SetPC(target);
+    cpu->SetPC(cpu->GetPC() + (char)upper);
+  } else {
+    cpu->SetPC(cpu->GetPC() + 2);
   }
 }
 
