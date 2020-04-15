@@ -343,7 +343,6 @@ std::vector<Cpu::RomInstruction> Cpu::DumpRom() {
   spdlog::get("console")->info("parsing rom...");
   std::vector<RomInstruction> instructions;
   for (auto addr = 0; addr < _cart->GetLength();) {
-    spdlog::get("console")->info("reading address: {}", addr);
     auto code = _cart->ReadByte(addr);
     const auto& instruction = s_lookup.at(code);
     instructions.push_back(std::make_pair(addr, instruction));
@@ -660,6 +659,12 @@ void Cpu::ResetBreakpointFlag()
 
 std::shared_ptr<cpu::State> Cpu::GetState() {
   return _state;
+}
+
+void Cpu::Stop() {
+  _running = false;
+  _stepping = false;
+  _stateNotifier->NotifyState(*_state, _history);
 }
 
 void Cpu::AdvanceState(const Instruction& instruction)

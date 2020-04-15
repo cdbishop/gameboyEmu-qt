@@ -71,6 +71,8 @@ public:
 
   std::shared_ptr<cpu::State> GetState();
 
+  void Stop();
+
 private:
   void AdvanceState(const Instruction& instruction);
 
