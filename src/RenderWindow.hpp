@@ -16,6 +16,7 @@ class DebugWindow;
 
 class RenderWindow : public QWidget
 {
+  Q_OBJECT
 public:
   RenderWindow(std::shared_ptr<cpu::Manager> cpuManager, DebugWindow* debugWindow, QWidget* parent = 0);
   ~RenderWindow();
