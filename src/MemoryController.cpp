@@ -33,11 +33,11 @@ void MemoryController::WriteByte(unsigned short address, unsigned char value)
       break;
 
     case AddressRange::VRAM:
-      _gpu->WriteVRAMByte(address & 0x1FFF, value);
+      _gpu->WriteVRAMByte(address, value);
       break;
 
     case AddressRange::OAM:
-      throw std::runtime_error("not implemented");
+      //throw std::runtime_error("not implemented");
       break;
 
     case AddressRange::IO:
