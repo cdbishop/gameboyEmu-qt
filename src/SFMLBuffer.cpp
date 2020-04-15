@@ -3,15 +3,15 @@
 SFMLBuffer::SFMLBuffer(QWidget* parent, const QPoint& position, const QSize& size)
   :SFMLCanvas(parent, position, size)
 {
+  _pixels.resize(size.width() * size.height() * 4, 0);
 }
 
 SFMLBuffer::~SFMLBuffer()
 {
   
 }
-
 void SFMLBuffer::Draw(const gpu::ScreenData& data) {
-  _pixels.fill(0);
+  std::fill(_pixels.begin(), _pixels.end(), 0);
 
   unsigned int pixel_idx = 0;
   for (auto i = 0; i < data.size(); ++i) {
