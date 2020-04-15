@@ -30,9 +30,13 @@ public:
   void WriteRegister(unsigned short address, unsigned char value);
   unsigned char ReadRegister(unsigned short address);
 
+  const gpu::ScreenData& GetScreenData() const;
+
+  void DumpTilesets() const;
+
 private:
   void RenderScanline();
-  void UpdateTile(unsigned short address, unsigned char value);
+  void UpdateTile(unsigned short address);
 
 private:
   std::shared_ptr<CpuStateNotifier> _notifier;
@@ -45,7 +49,7 @@ private:
 
   std::array<unsigned char, 0x2000> _vram;
   gpu::ScreenData _screen;
-  std::array<std::array<unsigned char, 8>, 384> _tileset;
+  std::array<std::array<std::array<unsigned char, 8>, 8>, 384> _tileset;
   std::array<std::array<unsigned char, 4>, 4> _pallets;
 
   bool _bgmap;

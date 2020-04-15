@@ -1,5 +1,7 @@
 #include <Gpu.hpp>
 
+#include <spdlog/spdlog.h>
+
 const std::array<unsigned char, 4> PixelWhite = { 255,255,255,255 };
 const std::array<unsigned char, 4> PixelLightGrey = { 192,192,192,255 };
 const std::array<unsigned char, 4> PixelDarkGrey = { 96,96,96,255 };
@@ -25,15 +27,20 @@ void Gpu::Reset() {
   }
 
   for (int i = 0; i < _tileset.max_size(); ++i) {
-    _tileset[i].fill(0);
+    for (int j = 0; j < _tileset[i].max_size(); ++j) {
+      _tileset[i][j].fill(0);
+    }
   }
 
   _scx = 0;
   _scy = 0;
   _bgmap = false;
 
-  //todo: notify screen data
   _notifier->NotifyScreenData(_screen);
+
+  gpu::TilesetDump dump;
+  dump.fill(0xFFFFFFFF);
+  _notifier->NotifyTilesetData(dump);
 
   _pallets[0] = PixelWhite;
   _pallets[1] = PixelLightGrey;
@@ -91,8 +98,16 @@ void Gpu::Step(std::shared_ptr<Cpu> cpu) {
 }
 
 void Gpu::WriteVRAMByte(unsigned short address, unsigned char value) {
-  _vram[address] = value;
-  UpdateTile(address, value);
+  switch (address & 0xF000) {
+    case 0x8000:
+    case 0x9000:
+      _vram[address & 0x1FFF] = value;
+      UpdateTile(address);
+      break;
+
+    default:
+      throw std::runtime_error("TODO: implement me!");
+  }
 }
 
 unsigned char Gpu::ReadVRAMByte(unsigned short address) {
@@ -107,8 +122,8 @@ void Gpu::WriteVRAMWord(unsigned short address, unsigned short value) {
   _vram[address+1] = hi;
 
   // TODO: is this needed?
-  UpdateTile(address, lo);
-  UpdateTile(address+1, hi);
+  UpdateTile(address);
+  UpdateTile(address+1);
 }
 
 unsigned char Gpu::ReadVRAMWord(unsigned short address) {
@@ -179,6 +194,12 @@ unsigned char Gpu::ReadRegister(unsigned short address) {
       return _scanline;
       break;
   }
+
+  //throw std::runtime_error("Error unexpected address");
+}
+
+const gpu::ScreenData & Gpu::GetScreenData() const {
+  return _screen;
 }
 
 void Gpu::RenderScanline() {
@@ -198,8 +219,9 @@ void Gpu::RenderScanline() {
   if (_bgtile == 1 && tile < 128) tile += 256;
 
   for (int i = 0; i < 160; ++i) {
-    int tile_value = _tileset[tile][y];
-    int pallet_idx = (tile_value >> (7 - x));
+    //int tile_value = _tileset[tile][y];
+    //int pallet_idx = (tile_value >> (7 - x));
+    int pallet_idx = _tileset[tile][y][x];
     int colour = 0;
     colour |= _pallets[pallet_idx][0] << 24;
     colour |= _pallets[pallet_idx][1] << 16;
@@ -219,7 +241,7 @@ void Gpu::RenderScanline() {
   }
 }
 
-void Gpu::UpdateTile(unsigned short address, unsigned char /*value*/) {
+void Gpu::UpdateTile(unsigned short address) {
   //update tileset representation based on vram
 
   // 8000 - 87FF = tileset 1: tiles 0-127
@@ -229,8 +251,16 @@ void Gpu::UpdateTile(unsigned short address, unsigned char /*value*/) {
   // 9800 - 9BFF = tilemap 0
   // 9C00 - 9FFF = tilemap 1
 
-  unsigned short tile = (address >> 4) & 0x1FF; // 0001 1111 1111
-  unsigned short y = (address >> 1) & 0x7; // 0111
+  unsigned address_masked = address & 0x1FFE;
+
+  unsigned short tile = (address_masked >> 4) & 0x1FF; // 0001 1111 1111
+  unsigned short y = (address_masked >> 1) & 0x7; // 0111
+
+  //TODO: Hack: tile exceeds limits - probably because of
+  //unimplemented parts?
+  if (tile >= 0x180) {
+    return;
+  }
 
   unsigned int sx;
   unsigned char value = 0;
@@ -244,10 +274,69 @@ void Gpu::UpdateTile(unsigned short address, unsigned char /*value*/) {
     // 0x803F 1 0 0 0 1 0 1 1
     //   =    2 1 0 0 3 1 3 2
 
-    unsigned char bit = _vram[address] & sx ? 1 : 0 +
-                          _vram[address + 1] & sx ? 2 : 0;
-    value |= (bit << (7 - x));
+    unsigned char bit = (_vram[address_masked] & sx) ? 1 : 0 +
+                          (_vram[address_masked + 1] & sx) ? 2 : 0;
+
+    _tileset[tile][y][x] = bit;        
+
+    //DumpTilesets();
   }
 
-  _tileset[tile][y] = value;
+  //DumpTilesets();
+}
+
+void Gpu::DumpTilesets() const {
+  gpu::TilesetDump dump;
+  dump.fill(0);
+
+  //TODO: make tileset dump work for all tiles
+  //for (auto tile = 0; tile < _tileset.size(); ++tile) {
+  for (auto tile = 0; tile < 300; ++tile) {
+    for (auto y = 0; y < _tileset[tile].size(); ++y) {
+      for (auto x = 0; x < 8; ++x) {
+        
+        int tile_value = _tileset[tile][y][x];
+        //int pallet_idx = (tile_value >> (7 - x));
+        int pallet_idx = tile_value;
+        unsigned int colour = 0;
+
+        colour |= _pallets[pallet_idx][0] << 24;
+        colour |= _pallets[pallet_idx][1] << 16;
+        colour |= _pallets[pallet_idx][2] << 8;
+        colour |= _pallets[pallet_idx][3];
+                
+        //unsigned int pixel_idx = (tile * 8) + (y * 192) + x;
+        unsigned int pixel_idx = (x + (tile * 8) + (y * 128));
+        pixel_idx += (tile / 16) * 128 * 8;
+
+        dump[pixel_idx] = colour;
+      }
+    }
+  }
+
+  //const unsigned int RED = 255 << 24 | 255;
+  //const unsigned int GREEN = 255 << 16 | 255;
+  //const unsigned int BLUE = 255 << 8 | 255;
+
+  //std::array<unsigned int, 3> cols = { RED, GREEN, BLUE };
+
+  //// fill dump with checkered pattern of 384 8x8 pixels
+  ////for (int i = 0; i < 384; ++i) {
+  //for (int i = 0; i < 300; ++i) {
+  //  for (int y = 0; y < 8; ++y) {
+  //    for (int x = 0; x < 8; ++x) {
+  //      //unsigned int pixel_idx = x + (y * 384) 
+  //      unsigned int pixel_idx = (x + (i * 8) + (y * 128));
+  //      //when i > 16, offset needs to include row of tiles
+  //      pixel_idx += ((i - 1) / 16) * 128 * 8;        
+
+  //      auto color = cols[i % 3];
+
+  //      dump[pixel_idx] = color;
+  //    }
+  //  }
+  //}
+
+
+  _notifier->NotifyTilesetData(dump);
 }
