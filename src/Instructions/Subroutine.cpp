@@ -8,13 +8,13 @@
 
 namespace Instructions {
   void Call(Cpu* cpu) {
-    auto pc = cpu->GetPC();
-    pc++;
+    auto pc = cpu->GetPC();    
+    pc += 3; //1-byte call instruction 2-bytes addr
     auto sp = cpu->GetRegister(Register16::SP);
+    sp -= 2;
     cpu->GetMemoryController()->WriteWord(sp, pc);
 
-    // decrement sp
-    sp -= 2;
+    // decrement sp    
     cpu->SetRegister(Register16::SP, sp);
 
     JmpImmediate16(cpu);    
