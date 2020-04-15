@@ -6,6 +6,7 @@
 #include "RenderWindow.hpp"
 #include "DebugWindow.hpp"
 #include "CpuManager.hpp"
+#include "tilesetViewerWindow.hpp"
 
 #include <spdlog/spdlog.h>
 #include <spdlog/async.h>
@@ -29,7 +30,17 @@ int main(int argc, char** argv) {
 
   RenderWindow renderWindow(cpuManager, &debugWindow);
   renderWindow.show();
-  
+
+  renderWindow.SetStateNotifier(state);
+
+  TilesetViewerWindow tilesetWindow;
+  tilesetWindow.show();
+  tilesetWindow.SetStateNotifier(state);
+
+  tilesetWindow.move(debugWindow.x() - tilesetWindow.width() - 5, debugWindow.y());
+  //renderWindow.move(tilesetWindow.x(), tilesetWindow.y() + tilesetWindow.height() + 30);
+  renderWindow.move(0, 0);
+
   return app.exec();
   
 }
