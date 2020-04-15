@@ -46,7 +46,7 @@ void DebugWindow::UpdateState(const cpu::State& state, const cpu::StateHistory& 
   std::lock_guard lk(_stateMutex);
   SetState(state);
   
-  for (auto i = 0; i < state._history.size(); ++i) {
+  for (auto i = _cpuHistory.size(); i < state._history.size(); ++i) {
     std::ostringstream ss;
     ss << "[" << std::hex << state._history[i].first << "] " << state._history[i].second;
     ui.lst_History->addItem(QString(ss.str().c_str()));
@@ -59,15 +59,7 @@ void DebugWindow::UpdateState(const cpu::State& state, const cpu::StateHistory& 
     delete item;
   }
 
-  // if history was circular buffer, how to know what index to use
-  // make _cpuHistory a circular buffer with same size
-  for (auto i = _cpuHistory.size(); i < history.size(); ++i) {
-    _cpuHistory.push_back(history[i]);
-  }
-
-  while (_cpuHistory.size() > history.max_size()) {
-    _cpuHistory.erase(_cpuHistory.begin());
-  }
+  _cpuHistory = history;
 
   int index = static_cast<int>(state._pc);  
   ui.lst_rom->setCurrentRow(_pcIndexLookup[index]);
