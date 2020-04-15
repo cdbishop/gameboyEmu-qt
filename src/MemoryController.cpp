@@ -201,7 +201,7 @@ unsigned short MemoryController::ReadWord(unsigned short address)
 
   case AddressRange::ERAM:
     {
-      unsigned short value = (_eram[address & 0x1FFF] << 8);
+      unsigned short value = (_eram[address + 1 & 0x1FFF] << 8);
       value |= _eram[address & 0x1FFF];
       return value;
     }
@@ -209,7 +209,7 @@ unsigned short MemoryController::ReadWord(unsigned short address)
 
   case AddressRange::WRAM:
     {
-      unsigned short value = (_wram[address & 0x1FFF] << 8);
+      unsigned short value = (_wram[address + 1 & 0x1FFF] << 8);
       value |= _wram[address & 0x1FFF];
       return value;
     }
@@ -217,7 +217,7 @@ unsigned short MemoryController::ReadWord(unsigned short address)
 
   case AddressRange::ZRAM:
     {
-      unsigned short value = (_zram[address & 0x7F] << 8);
+      unsigned short value = (_zram[address + 1 & 0x7F] << 8);
       value |= _zram[address & 0x7F];
       return value;
     }
