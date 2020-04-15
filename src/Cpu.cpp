@@ -461,15 +461,18 @@ void Cpu::DecRegister(Register8 reg)
   short original = (short)val;
   val -= 1;
 
-  ClearFlags();
   if (val == 0) {
     SetFlag(cpu::Flag::Zero);
+  } else {
+    ClearFlag(cpu::Flag::Zero);
   }
 
   SetFlag(cpu::Flag::SubOp);
 
   if (((original & 0xF) - 1) < 0) {
     SetFlag(cpu::Flag::HalfCarry);
+  } else {
+    ClearFlag(cpu::Flag::HalfCarry);
   }
 
   SetRegister(reg, val);
@@ -484,7 +487,25 @@ void Cpu::DecRegister(Register16 reg)
 
 void Cpu::IncRegister(Register8 reg)
 {
-  SetRegister(reg, GetRegister(reg) + 1);
+  unsigned char val = GetRegister(reg);
+  short original = (short)val;
+  val += 1;
+
+  if (val == 0) {
+    SetFlag(cpu::Flag::Zero);
+  } else {
+    ClearFlag(cpu::Flag::Zero);
+  }
+
+  ClearFlag(cpu::Flag::SubOp);
+
+  if (((original & 0xF) - 1) < 0) {
+    SetFlag(cpu::Flag::HalfCarry);
+  } else {
+    ClearFlag(cpu::Flag::HalfCarry);
+  }
+
+  SetRegister(reg, val);
 }
 
 void Cpu::IncRegister(Register16 reg)
