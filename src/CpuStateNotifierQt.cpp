@@ -27,14 +27,11 @@ void CpuStateNotifierQt::NotifyState(const cpu::State& state, std::shared_ptr<co
   _updateFlag |= UpdateFlag_State;
 
   _nextState = state;
-  //_nextStateHistory = history;
 
   if (history) {
-    const cpu::StateHistory& ref = *history;
-    for (auto i = _nextStateHistory.size(); i < ref.size(); ++i) {
-      _nextStateHistory.push_back(ref[i]);
-    }
+    _nextStateHistory = *history;
   }
+
   _notified = true;
   _notifyCv.notify_one();
 }
