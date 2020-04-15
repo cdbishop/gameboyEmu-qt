@@ -44,6 +44,8 @@ public:
 
   size_t GetLength() const;
 
+  const std::vector<unsigned char>& GetBuffer() const;
+
 private:
   void ReadName();
   void ReadHeader();

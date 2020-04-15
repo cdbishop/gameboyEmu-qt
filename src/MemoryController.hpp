@@ -19,6 +19,8 @@ public:
   explicit MemoryController(std::shared_ptr<Gpu> gpu);
   ~MemoryController();
 
+  void MapCartData(const std::vector<unsigned char>& data);
+
   void WriteByte(unsigned short address, unsigned char value);
   void WriteWord(unsigned short address, unsigned short value);
 

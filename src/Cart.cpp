@@ -42,6 +42,10 @@ size_t Cart::GetLength() const {
   return _buffer.size();
 }
 
+const std::vector<unsigned char>& Cart::GetBuffer() const {
+  return _buffer;
+}
+
 void Cart::ReadName() {
   // name
   std::vector<unsigned char>::const_iterator first = _buffer.begin() + (int)RomDataOffset::NameStart;

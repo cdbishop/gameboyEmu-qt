@@ -14,6 +14,10 @@ MemoryController::~MemoryController()
 {
 }
 
+void MemoryController::MapCartData(const std::vector<unsigned char>& data) {
+  _rom = data;
+}
+
 void MemoryController::WriteByte(unsigned short address, unsigned char value)
 {
   auto range = GetAddressRange(address);

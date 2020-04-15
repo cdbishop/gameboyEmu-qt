@@ -299,6 +299,7 @@ Cpu::Cpu(const std::shared_ptr<Cart> cart, std::shared_ptr<CpuStateNotifier> not
   _memoryController(memoryController) {
 
   _stateNotifier->NotifyState(*_state, _history);
+  _memoryController->MapCartData(_cart->GetBuffer());
 }
 
 void Cpu::Step()
