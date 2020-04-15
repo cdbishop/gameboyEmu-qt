@@ -105,6 +105,10 @@ void RenderWindow::OnRemoveRegBreak(const std::string& regValue)
 void RenderWindow::OpenFile()
 {
   //_cpuManager->LoadFile("roms\\tetris.gb");
-  _cpuManager->LoadFile("roms\\opusgames_test1.gb");
+  //_cpuManager->LoadFile("roms\\opusgames_test5.gb");
+  //_cpuManager->LoadFile("roms\\opusgames_test1.gb");
   //_cpuManager->LoadFile("roms\\01-special.gb");
+
+  // this is the same test rom as imran
+  _cpuManager->LoadFile("roms\\opus5.gb");
 }
