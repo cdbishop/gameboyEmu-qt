@@ -29,10 +29,8 @@ void Manager::LoadFile(const std::string& file) {
       while (_threadRunning && _cpu->Running()) {
         auto curFrameClock = _cpu->GetState()->_clock._t + _clocksPerFrame;
 
-        if (_currentRunSpeed == RunSpeed::Stepping)
-          std::this_thread::sleep_for(std::chrono::seconds(1));
-        else
-          std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        //if (_currentRunSpeed == RunSpeed::Stepping)
+        //  std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
         std::lock_guard lk(_lock);
         // TODO: cpu needs proper timing
