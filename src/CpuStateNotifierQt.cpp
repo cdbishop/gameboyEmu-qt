@@ -5,6 +5,8 @@
 
 #include <qmetatype.h>
 
+Q_DECLARE_METATYPE(std::string);
+
 CpuStateNotifierQt::CpuStateNotifierQt(DebugWindow* window)
   :QObject(),
    _window(window),
@@ -19,9 +21,11 @@ CpuStateNotifierQt::CpuStateNotifierQt(DebugWindow* window)
   qRegisterMetaType<cpu::StateHistory>("cpu::StateHistory");
   qRegisterMetaType<std::vector<Cpu::RomInstruction>>("std::vector<Cpu::RomInstruction>");
   qRegisterMetaType<gpu::TilesetDump>("gpu::TilesetDump");
+  qRegisterMetaType<std::string>("std::string");
 }
 
-void CpuStateNotifierQt::NotifyState(const cpu::State& state, std::shared_ptr<const cpu::StateHistory> history)
+void CpuStateNotifierQt::NotifyState(const cpu::State& state, std::shared_ptr<const cpu::StateHistory> history,
+  std::shared_ptr<MemoryController> memory_ctrl)
 {
   std::unique_lock lk(_notifyMutex);
   _updateFlag |= UpdateFlag_State;
@@ -30,6 +34,7 @@ void CpuStateNotifierQt::NotifyState(const cpu::State& state, std::shared_ptr<co
 
   if (history) {
     _nextStateHistory = *history;
+    _memory_dump = memory_ctrl->ToString();
   }
 
   _notified = true;
@@ -76,7 +81,7 @@ void CpuStateNotifierQt::ThreadMain() {
 
     //TODO: emit signal here
     if (_updateFlag & UpdateFlag_State)
-      emit NotifyStateSignal(_nextState, _nextStateHistory);
+      emit NotifyStateSignal(_nextState, _nextStateHistory, _memory_dump);
 
     if (_updateFlag & UpdateFlag_RomData)
       emit NotifyRomDataSignal(_nextInstructionState);

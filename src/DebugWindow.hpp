@@ -21,12 +21,12 @@ public:
 
   void SetStateNotifier(std::shared_ptr<CpuStateNotifierQt> notifier);
 
-  void UpdateState(const cpu::State& state, const cpu::StateHistory& history);
+  void UpdateState(const cpu::State& state, const cpu::StateHistory& history, const std::string& memory_dump);
   void UpdateRomData(const std::vector<Cpu::RomInstruction>& instructions);
 
   void SetState(const cpu::State& state);
 
-  void OnNotifyStateSignal(const cpu::State& state, const cpu::StateHistory& history);
+  void OnNotifyStateSignal(const cpu::State& state, const cpu::StateHistory& history, const std::string& memory_dump);
   void OnNotifyRomDataSignal(const std::vector<Cpu::RomInstruction>& instructions);
 
 private:

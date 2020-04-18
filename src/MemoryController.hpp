@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <Gpu.hpp>
+#include <qmetatype.h>
 
 class MemoryController {
 public:
@@ -16,8 +17,13 @@ public:
     ZRAM,
   };
 
+  MemoryController();
+
   explicit MemoryController(std::shared_ptr<Gpu> gpu);
   ~MemoryController();
+
+  MemoryController(const MemoryController&) = default;
+  MemoryController& operator=(const MemoryController&) = default;
 
   void MapCartData(const std::vector<unsigned char>& data);
 
@@ -26,6 +32,8 @@ public:
 
   unsigned char ReadByte(unsigned short address);
   unsigned short ReadWord(unsigned short address);
+
+  std::string ToString();
 
 private:
   AddressRange GetAddressRange(unsigned short address);

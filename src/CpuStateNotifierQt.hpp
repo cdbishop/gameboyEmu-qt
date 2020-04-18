@@ -1,6 +1,7 @@
 #pragma once
 #include <CpuStateNotifier.hpp>
 #include "cpu/StateHistory.hpp"
+#include "MemoryController.hpp"
 
 #include "gpu/ScreenData.hpp"
 
@@ -23,13 +24,14 @@ public:
 
   CpuStateNotifierQt(DebugWindow* window);
 
-  void NotifyState(const cpu::State& state, std::shared_ptr<const cpu::StateHistory> history);
+  void NotifyState(const cpu::State& state, std::shared_ptr<const cpu::StateHistory> history,
+    std::shared_ptr<MemoryController> memory_ctrl);
   void NotifyRomData(const std::vector<Cpu::RomInstruction>& instructions);
   void NotifyScreenData(const gpu::ScreenData& data);
   void NotifyTilesetData(const gpu::TilesetDump& data);
 
 signals:
-  void NotifyStateSignal(const cpu::State& state, const cpu::StateHistory& history);
+  void NotifyStateSignal(const cpu::State& state, const cpu::StateHistory& history, const std::string& memory_dump);
   void NotifyRomDataSignal(const std::vector<Cpu::RomInstruction>& instructions);
   void NotifyScreenDataSignal(const gpu::ScreenData& data);
   void NotifyTileDataSignal(const gpu::TilesetDump& data);
@@ -55,4 +57,6 @@ private:
   int _updateFlag;
 
   gpu::TilesetDump _tilesetData;
+
+  std::string _memory_dump;
 };

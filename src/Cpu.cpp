@@ -298,7 +298,7 @@ Cpu::Cpu(const std::shared_ptr<Cart> cart, std::shared_ptr<CpuStateNotifier> not
   _history(std::make_shared<cpu::StateHistory>(50)),
   _memoryController(memoryController) {
 
-  _stateNotifier->NotifyState(*_state, _history);
+  _stateNotifier->NotifyState(*_state, _history, _memoryController);
   _memoryController->MapCartData(_cart->GetBuffer());
 }
 
@@ -334,9 +334,9 @@ void Cpu::Step()
 
   // TODO: record history sent + only send new history
   if (_stepping || _breakpoint_hit)
-    _stateNotifier->NotifyState(*_state, _history);
+    _stateNotifier->NotifyState(*_state, _history, _memoryController);
 
-  spdlog::get("console")->debug("last pc: {}", last_pc);
+  //spdlog::get("console")->debug("last pc: {}", last_pc);
 }
 
 std::vector<Cpu::RomInstruction> Cpu::DumpRom() {
@@ -603,7 +603,7 @@ void Cpu::EnableStepping(bool enable)
 {
   _stepping = enable;
   if (!_stepping) {
-    _stateNotifier->NotifyState(*_state, _history);
+    _stateNotifier->NotifyState(*_state, _history, _memoryController);
   }
 }
 
@@ -664,7 +664,7 @@ std::shared_ptr<cpu::State> Cpu::GetState() {
 void Cpu::Stop() {
   _running = false;
   _stepping = false;
-  _stateNotifier->NotifyState(*_state, _history);
+  _stateNotifier->NotifyState(*_state, _history, _memoryController);
 }
 
 void Cpu::AdvanceState(const Instruction& instruction)

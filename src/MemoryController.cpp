@@ -1,5 +1,17 @@
 #include "MemoryController.hpp"
 
+#include <sstream>
+
+MemoryController::MemoryController()
+  :_inbios(true),
+  _gpu(nullptr) {
+  _bios.resize(0xFF, 0);
+  _rom.resize(0x8000, 0);
+  _wram.resize(0x4000, 0);
+  _eram.resize(0x2000, 0);
+  _zram.resize(0x80, 0);
+}
+
 MemoryController::MemoryController(std::shared_ptr<Gpu> gpu)
   :_inbios(true),
    _gpu(gpu) {
@@ -227,6 +239,67 @@ unsigned short MemoryController::ReadWord(unsigned short address)
     throw std::runtime_error("Unhandled enum case");
     break;
   }
+}
+
+std::string MemoryController::ToString() {
+  std::stringstream ss;
+  const int line_length = 0x10;
+  for (int i = 0; i < _rom.size(); i += line_length) {
+    ss << std::hex << i << ": ";
+    for (int c = 0; c < line_length; ++c) {
+      if ((i + c) >= _rom.size())
+        break;
+      ss << std::hex << static_cast<unsigned int>(_rom[i + c]) << " ";
+    }
+    ss << std::endl;
+  }
+  
+  const auto& vram = _gpu->GetData();
+  int offset = _rom.size();
+  for (int i = 0; i < vram.size(); i += line_length) {
+    ss << std::hex << offset + i << ": ";
+    for (int c = 0; c < line_length; ++c) {
+      if ((i + c) >= vram.size())
+        break;
+      ss << std::hex << static_cast<unsigned int>(vram[i + c]) << " ";
+    }
+    ss << std::endl;
+  }
+
+  offset += vram.size();
+  for (int i = 0; i < _eram.size(); i += line_length) {
+    ss << std::hex << offset + i << ": ";
+    for (int c = 0; c < line_length; ++c) {
+      if ((i + c) >= _eram.size())
+        break;
+      ss << std::hex << static_cast<unsigned int>(_eram[i + c]) << " ";
+    }
+    ss << std::endl;
+  }
+
+  offset += _eram.size();
+  for (int i = 0; i < _wram.size(); i += line_length) {
+    ss << std::hex << offset + i << ": ";
+    for (int c = 0; c < line_length; ++c) {
+      if ((i + c) >= _wram.size())
+        break;
+      ss << std::hex << static_cast<unsigned int>(_wram[i + c]) << " ";
+    }
+    ss << std::endl;
+  }
+
+  offset += _wram.size();
+  for (int i = 0; i < _zram.size(); i += line_length) {
+    ss << std::hex << offset + i << ": ";
+    for (int c = 0; c < line_length; ++c) {
+      if ((i + c) >= _zram.size())
+        break;
+      ss << std::hex << static_cast<unsigned int>(_zram[i + c]) << " ";
+    }
+    ss << std::endl;
+  }
+
+  return ss.str();
 }
 
 MemoryController::AddressRange MemoryController::GetAddressRange(unsigned short address)

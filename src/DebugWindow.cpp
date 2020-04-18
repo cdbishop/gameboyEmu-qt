@@ -10,6 +10,7 @@
 #include "spdlog/spdlog.h"
 
 #include <sstream>
+#include <fstream>
 
 template<typename T>
 QString FormatValueHex(const T& value) {
@@ -34,6 +35,8 @@ DebugWindow::DebugWindow(QApplication* app, QWidget *parent)
 
   connect(ui.lst_History, &QAbstractItemView::clicked, this, &DebugWindow::OnPreviousStateSelected);
   connect(ui.lst_rom, &QListWidget::doubleClicked, this, &DebugWindow::OnRomInstructionDoubleClicked);
+
+  std::ofstream historyFile("history.txt", std::ios::out | std::ios::trunc);
 }
 
 void DebugWindow::SetStateNotifier(std::shared_ptr<CpuStateNotifierQt> notifier) {
@@ -41,16 +44,33 @@ void DebugWindow::SetStateNotifier(std::shared_ptr<CpuStateNotifierQt> notifier)
   ret = connect(notifier.get(), &CpuStateNotifierQt::NotifyRomDataSignal, this, &DebugWindow::OnNotifyRomDataSignal);
 }
 
-void DebugWindow::UpdateState(const cpu::State& state, const cpu::StateHistory& history)
+void DebugWindow::UpdateState(const cpu::State& state, const cpu::StateHistory& history, const std::string& memory_dump)
 {
   std::lock_guard lk(_stateMutex);
   SetState(state);
-  
+  //std::ofstream historyFile("history.txt", std::ios::out | std::ios::app);
+  //assert(historyFile.is_open());
   for (auto i = _cpuHistory.size(); i < state._history.size(); ++i) {
+  //if (state._history.size() > 0) {
+    //int i = state._history.size() - 1;
     std::ostringstream ss;
     ss << "[" << std::hex << state._history[i].first << "] " << state._history[i].second;
     ui.lst_History->addItem(QString(ss.str().c_str()));
+
+    ss.str("");
+    ss.clear();
+
+    ss << state._history[i].second << " - [a: " << state._a << " b: " << state._b << " c: "
+      << state._c << " d: " << state._d << " e: " << state._e << " h: " << state._h << " l: " << state._l
+      << " flag: " << state._flag << " pc: " << state._pc << " sp: " << state._sp;
+
+    ss << std::endl;
+    ss << memory_dump;
+    ss << std::endl;
+
+    //historyFile << ss.str() << std::endl;
   }
+  //historyFile.close();
 
   // TODO: change 50 to be max items in circular buffer
   // should stay in sync, as items in buffer are overridden
@@ -246,8 +266,8 @@ void DebugWindow::OnRomInstructionDoubleClicked(const QModelIndex& index) {
   }
 }
 
-void DebugWindow::OnNotifyStateSignal(const cpu::State& state, const cpu::StateHistory& history) {
-  UpdateState(state, history);
+void DebugWindow::OnNotifyStateSignal(const cpu::State& state, const cpu::StateHistory& history, const std::string& memory_dump) {
+  UpdateState(state, history, memory_dump);
 }
 
 void DebugWindow::OnNotifyRomDataSignal(const std::vector<Cpu::RomInstruction>& instructions) {

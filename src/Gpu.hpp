@@ -34,6 +34,8 @@ public:
 
   void DumpTilesets() const;
 
+  const std::array<unsigned char, 0x2000>& GetData() const;
+
 private:
   void RenderScanline();
   void UpdateTile(unsigned short address);

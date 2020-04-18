@@ -340,3 +340,7 @@ void Gpu::DumpTilesets() const {
 
   _notifier->NotifyTilesetData(dump);
 }
+
+const std::array<unsigned char, 0x2000>& Gpu::GetData() const {
+  return _vram;
+}
