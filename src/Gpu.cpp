@@ -46,6 +46,8 @@ void Gpu::Reset() {
   _pallets[1] = PixelLightGrey;
   _pallets[2] = PixelDarkGrey;
   _pallets[3] = PixelBlack;
+
+  _vram.fill(0);
 }
 
 void Gpu::Step(std::shared_ptr<Cpu> cpu) {
@@ -135,6 +137,7 @@ unsigned char Gpu::ReadVRAMWord(unsigned short address) {
 void Gpu::WriteRegister(unsigned short address, unsigned char value) {
   switch (address) {
     case 0xFF40:
+      _ctrl_value = value;
       _switchBg = (value & 0x01);
       _bgmap = (value & 0x08);
       _bgtile = (value & 0x10);
@@ -204,31 +207,32 @@ const gpu::ScreenData & Gpu::GetScreenData() const {
 
 void Gpu::RenderScanline() {
   //Get VRAM offset for the tilemap
-  int map_offset = _bgmap ? 0x1c00 : 0x1800;
-  map_offset += ((_scanline + _scy) & 255) >> 3;
+  int map_base = _bgmap ? 0x1c00 : 0x1800;
+  int map_offset = map_base + ((((_scanline + _scy) & 255) >> 3) << 5);
 
-  int line_offset = (_scx >> 3);
+  //int line_offset = (_scx >> 3);
+  int line_offset = (_scx >> 3) & 31;
 
-  int y = (_scanline + _scy) & 7;
+  int tile_y = (_scanline + _scy) & 7;
   int x = _scx & 7;
 
   int col = 0;
   int tile = _vram[map_offset + line_offset];
 
   // compensate for the fact that tileset 1 has signed integer
-  if (_bgtile == 1 && tile < 128) tile += 256;
+  //TODO: is this needed?
+  //if (_bgtile == 1 && tile < 128) tile += 256;
 
   for (int i = 0; i < 160; ++i) {
-    //int tile_value = _tileset[tile][y];
-    //int pallet_idx = (tile_value >> (7 - x));
-    int pallet_idx = _tileset[tile][y][x];
+    int pallet_idx = _tileset[tile][tile_y][x];
+
     int colour = 0;
     colour |= _pallets[pallet_idx][0] << 24;
     colour |= _pallets[pallet_idx][1] << 16;
     colour |= _pallets[pallet_idx][2] << 8;
     colour |= _pallets[pallet_idx][3];
         
-    _screen[y][x] = colour;
+    _screen[_scanline][i] = colour;
 
     ++x;
 
@@ -236,7 +240,9 @@ void Gpu::RenderScanline() {
       x = 0;
       line_offset = (line_offset + 1) & 0x1F;
       tile = _vram[map_offset + line_offset];
-      if (_bgtile == 1 && tile < 128) tile += 256;
+
+      //TODO: is this needed?
+      //if (_bgtile == 1 && tile < 128) tile += 256;
     }
   }
 }
@@ -282,7 +288,7 @@ void Gpu::UpdateTile(unsigned short address) {
     //DumpTilesets();
   }
 
-  //DumpTilesets();
+  DumpTilesets();
 }
 
 void Gpu::DumpTilesets() const {
@@ -296,7 +302,6 @@ void Gpu::DumpTilesets() const {
       for (auto x = 0; x < 8; ++x) {
         
         int tile_value = _tileset[tile][y][x];
-        //int pallet_idx = (tile_value >> (7 - x));
         int pallet_idx = tile_value;
         unsigned int colour = 0;
 
@@ -305,7 +310,6 @@ void Gpu::DumpTilesets() const {
         colour |= _pallets[pallet_idx][2] << 8;
         colour |= _pallets[pallet_idx][3];
                 
-        //unsigned int pixel_idx = (tile * 8) + (y * 192) + x;
         unsigned int pixel_idx = (x + (tile * 8) + (y * 128));
         pixel_idx += (tile / 16) * 128 * 8;
 

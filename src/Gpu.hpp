@@ -54,6 +54,7 @@ private:
   std::array<std::array<std::array<unsigned char, 8>, 8>, 384> _tileset;
   std::array<std::array<unsigned char, 4>, 4> _pallets;
 
+  int _ctrl_value;
   bool _bgmap;
   bool _bgtile;
   bool _switchBg;
