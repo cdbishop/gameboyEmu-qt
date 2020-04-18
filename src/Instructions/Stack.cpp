@@ -17,7 +17,8 @@ namespace Instructions {
   void Push16(Cpu* cpu, Register16 reg) {
     auto addr = cpu->GetRegister(Register16::SP);
     auto val = cpu->GetRegister(reg);
+    addr -= 2;
     cpu->GetMemoryController()->WriteWord(addr, val);
-    cpu->SetRegister(Register16::SP, addr - 2);
+    cpu->SetRegister(Register16::SP, addr);
   }
 }

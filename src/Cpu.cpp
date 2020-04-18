@@ -226,7 +226,7 @@ const std::map<unsigned char, Instruction> s_lookup = {
   { 0xc2, Instruction("JP NZ nn", 0xc2, 0, 3, 3, std::bind(Instructions::JmpImmediate16_NotZero, std::placeholders::_1), Instruction::OpOrder::Pre) },
   { 0xc3, Instruction("JP nn", 0xc3, 0, 3, 3, &Instructions::JmpImmediate16, Instruction::OpOrder::None) },
   { 0xc4, Instruction("CALL NZ nn", 0xc4, 0, 12, 3, &Instructions::CallNotZero, Instruction::OpOrder::None) },
-  { 0xc5, Instruction("PUSH BC", 0xc5, 2, 2, 2, std::bind(Instructions::Push16, std::placeholders::_1, Register16::BC)) },
+  { 0xc5, Instruction("PUSH BC", 0xc5, 1, 4, 1, std::bind(Instructions::Push16, std::placeholders::_1, Register16::BC)) },
   { 0xc6, Instruction("ADD A n", 0xc6, 2, 2, 2, std::bind(Instructions::Add8_Immediate, std::placeholders::_1, Register8::A)) },
   { 0xc7, Instruction("RST 0", 0xc7, 1, 4, 1, std::bind(Instructions::Restart, std::placeholders::_1, 0), Instruction::OpOrder::Pre) },
   { 0xc8, Instruction("RET Z", 0xc8, 1, 2, 1, std::bind(Instructions::RetZero, std::placeholders::_1), Instruction::OpOrder::Pre) },
