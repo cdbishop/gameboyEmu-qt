@@ -18,10 +18,11 @@ RenderWindow::RenderWindow(std::shared_ptr<cpu::Manager> cpuManager, DebugWindow
    _cpuManager(cpuManager),
   _debugWindow(debugWindow) {
 
-  _renderBuffer = new SFMLBuffer(this, QPoint(0, 0), QSize(gpu::Width, gpu::Height));
+  static const unsigned int MenuBarHeight = 20;
+  _renderBuffer = new SFMLBuffer(this, QPoint(0, MenuBarHeight), QSize(gpu::Width, gpu::Height));
   _renderBuffer->show();
 
-  resize(QSize(gpu::Width, gpu::Height));
+  resize(QSize(gpu::Width, gpu::Height + MenuBarHeight));
 
   _openAction = new QAction(tr("&New"), this);
   _openAction->setStatusTip(tr("Open rom file"));
