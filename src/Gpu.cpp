@@ -208,13 +208,26 @@ const gpu::ScreenData & Gpu::GetScreenData() const {
 void Gpu::RenderScanline() {
   //Get VRAM offset for the tilemap
   int map_base = _bgmap ? 0x1c00 : 0x1800;
-  int map_offset = map_base + ((((_scanline + _scy) & 255) >> 3) << 5);
 
-  //int line_offset = (_scx >> 3);
-  int line_offset = (_scx >> 3) & 31;
+  // tiles are stored in 32x32 block
+  // current scanline + scy provide tile offset in y
+  // div 32 to round to last tile row
+  //int map_offset_old = map_base + ((((_scanline + _scy) & 255) >> 3) << 5);
 
-  int tile_y = (_scanline + _scy) & 7;
-  int x = _scx & 7;
+  // find the start of the current tile = current tile row (determine by / 8 for pixels + mod 32 to wrap around)
+  // then mult 32 as each row is 32 blocks in x
+  int map_offset = map_base + (((_scanline + _scy) / 8) % 32) * 32;
+
+  //int line_offset = (_scx >> 3) & 0x1F;
+  int line_offset = (_scx / 8);
+
+  //int tile_y = (_scanline + _scy) & 7;
+  // this makes sense - modulate the current scanline by tile height to find y co-ord in tile
+  int tile_y = _scanline % 8;
+
+  //int x = _scx & 7;
+  // find starting x by dividing by num tiles in row (32) then num pixels in tile (8)
+  int x = (_scx / 8) / 32;
 
   int col = 0;
   int tile = _vram[map_offset + line_offset];
@@ -238,7 +251,8 @@ void Gpu::RenderScanline() {
 
     if (x == 8) {
       x = 0;
-      line_offset = (line_offset + 1) & 0x1F;
+      //line_offset = (line_offset + 1) & 0x1F;
+      line_offset = (line_offset + 1) % 32;
       tile = _vram[map_offset + line_offset];
 
       //TODO: is this needed?
