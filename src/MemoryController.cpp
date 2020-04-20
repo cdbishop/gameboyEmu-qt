@@ -4,7 +4,8 @@
 
 MemoryController::MemoryController()
   :_inbios(true),
-  _gpu(nullptr) {
+  _gpu(nullptr),
+  _input(0) {
   _bios.resize(0xFF, 0);
   _rom.resize(0x8000, 0);
   _wram.resize(0x4000, 0);
@@ -54,6 +55,10 @@ void MemoryController::WriteByte(unsigned short address, unsigned char value)
 
     case AddressRange::IO:
       switch (address & 0x00F0) {
+        case 0x00:
+          _input = value;
+          break;
+
         case 0x40:
         case 0x50:
         case 0x60:
@@ -155,11 +160,15 @@ unsigned char MemoryController::ReadByte(unsigned short address)
 
   case AddressRange::IO:
     switch (address & 0x00F0) {
-    case 0x40:
-    case 0x50:
-    case 0x60:
-    case 0x70:
-      return _gpu->ReadRegister(address);
+    case 0x00:
+      return _input;
+      break;
+
+      case 0x40:
+      case 0x50:
+      case 0x60:
+      case 0x70:
+        return _gpu->ReadRegister(address);
     }
     break;
 

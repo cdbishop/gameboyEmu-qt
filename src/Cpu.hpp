@@ -6,6 +6,7 @@
 #include "cpu/StateHistory.hpp"
 #include "CpuState.hpp"
 #include "cpu/flag.hpp"
+#include "Input.hpp"
 
 #include <qmetatype.h>
 
@@ -72,6 +73,8 @@ public:
   std::shared_ptr<cpu::State> GetState();
 
   void Stop();
+
+  void UpdateInput(input::State state);
 
 private:
   void AdvanceState(const Instruction& instruction);

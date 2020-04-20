@@ -7,6 +7,7 @@
 #include <Cart.hpp>
 #include <RunSpeed.hpp>
 #include <MemoryController.hpp>
+#include <Input.hpp>
 
 #include <thread>
 #include <mutex>
@@ -32,6 +33,10 @@ public:
 
   void RemoveRegBreak(const std::string& regValue);
 
+  input::State GetInput() const;
+
+  void UpdateInput(input::State state);
+
 private:
   std::mutex _lock;
   std::shared_ptr<MemoryController> _memoryController;
@@ -44,6 +49,7 @@ private:
   std::atomic<bool> _threadRunning;
   RunSpeed _currentRunSpeed;
   unsigned int _clocksPerFrame;
+  input::State _state;
 };
 
 }

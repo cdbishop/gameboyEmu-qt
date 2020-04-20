@@ -16,10 +16,10 @@ class CpuStateNotifierQt final : public QObject, public CpuStateNotifier {
   Q_OBJECT
 public:
   enum UpdateFlag {
-    UpdateFlag_State = 1 << 1,
-    UpdateFlag_RomData = 1 << 2,
-    UpdateFlag_Screen = 1 << 3,
-    UpdateFlag_TilesetDebug = 1 << 4,
+    UpdateFlag_State          = 1 << 1,
+    UpdateFlag_RomData        = 1 << 2,
+    UpdateFlag_Screen         = 1 << 3,
+    UpdateFlag_TilesetDebug   = 1 << 4,
   };
 
   CpuStateNotifierQt(DebugWindow* window);

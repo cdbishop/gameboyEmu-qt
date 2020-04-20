@@ -667,6 +667,10 @@ void Cpu::Stop() {
   _stateNotifier->NotifyState(*_state, _history, _memoryController);
 }
 
+void Cpu::UpdateInput(input::State state) {
+  spdlog::get("console")->debug("Input = {}", static_cast<int>(state));
+}
+
 void Cpu::AdvanceState(const Instruction& instruction)
 {
   _state->_pc += instruction.GetPCAdvance();  

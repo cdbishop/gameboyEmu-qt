@@ -47,4 +47,6 @@ private:
   std::vector<unsigned char> _wram;
   std::vector<unsigned char> _eram;
   std::vector<unsigned char> _zram;
+
+  unsigned char _input;
 };

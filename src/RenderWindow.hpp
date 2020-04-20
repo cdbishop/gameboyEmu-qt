@@ -3,7 +3,6 @@
 #include <QtWidgets/qwidget.h>
 #include <QtWidgets/qmenu.h>
 
-//#include "SFMLCanvasTest.hpp"
 #include "SFMLBuffer.hpp"
 #include "CpuStateNotifierQt.hpp"
 #include "CpuManager.hpp"
@@ -26,6 +25,10 @@ public:
   void CpuPause();
 
   void SetStateNotifier(std::shared_ptr<CpuStateNotifierQt> notifier);
+
+protected:
+  void keyPressEvent(QKeyEvent* event) override;
+  void keyReleaseEvent(QKeyEvent* event) override;
 
 private:
   void OnNotifyScreenDataSignal(const gpu::ScreenData& data);

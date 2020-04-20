@@ -8,6 +8,7 @@
 #include <qmenubar.h>
 #include <qmenu.h>
 #include <qboxlayout.h>
+#include <qevent.h>
 
 #include "spdlog/spdlog.h"
 
@@ -70,6 +71,102 @@ void RenderWindow::CpuPause()
 
 void RenderWindow::SetStateNotifier(std::shared_ptr<CpuStateNotifierQt> notifier) {
   bool ret = connect(notifier.get(), &CpuStateNotifierQt::NotifyScreenDataSignal, this, &RenderWindow::OnNotifyScreenDataSignal);
+}
+
+void RenderWindow::keyPressEvent(QKeyEvent* event) {
+  auto key = event->key();
+  input::State state = _cpuManager->GetInput();
+
+  if (event->isAutoRepeat())
+    return;
+  
+  switch (key) {
+    case Qt::Key_Up:
+      state |= input::button::Up;
+      break;
+
+    case Qt::Key_Down:
+      state |= input::button::Down;
+      break;
+
+    case Qt::Key_Left:
+      state |= input::button::Left;
+      break;
+
+    case Qt::Key_Right:
+      state |= input::button::Right;
+      break;
+
+    case Qt::Key_Z:
+      state |= input::button::A;
+      //A
+      break;
+
+    case Qt::Key_X:
+      state |= input::button::B;
+      //B
+      break;
+
+    case Qt::Key_A:
+      state |= input::button::Select;
+      //Select
+      break;
+
+    case Qt::Key_S:
+      state |= input::button::Start;
+      //Start
+      break;
+  }
+
+  _cpuManager->UpdateInput(state);
+}
+
+void RenderWindow::keyReleaseEvent(QKeyEvent * event) {
+  auto key = event->key();
+  auto state = _cpuManager->GetInput();
+
+  if (event->isAutoRepeat())
+    return;
+
+  switch (key) {
+    case Qt::Key_Up:
+      state &= ~input::button::Up;
+      break;
+
+    case Qt::Key_Down:
+      state &= ~input::button::Down;
+      break;
+
+    case Qt::Key_Left:
+      state &= ~input::button::Left;
+      break;
+
+    case Qt::Key_Right:
+      state &= ~input::button::Right;
+      break;
+
+    case Qt::Key_Z:      
+      //A
+      state &= ~input::button::A;
+      break;
+
+    case Qt::Key_X:
+      //B
+      state &= ~input::button::B;
+      break;
+
+    case Qt::Key_A:
+      //Select
+      state &= ~input::button::Select;
+      break;
+
+    case Qt::Key_S:
+      //Start
+      state &= ~input::button::Start;
+      break;
+  }
+
+  _cpuManager->UpdateInput(state);
 }
 
 void RenderWindow::OnNotifyScreenDataSignal(const gpu::ScreenData& data) {

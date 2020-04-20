@@ -8,7 +8,8 @@ static const unsigned int VBlankLines = 10;
 
 Manager::Manager(std::shared_ptr<CpuStateNotifierQt> notifier)
   :_stateNotifier(notifier),
-   _threadRunning(false) {
+   _threadRunning(false),
+   _state(0) {
 
   _clocksPerFrame = gpu::Height * ClocksPerScanline;
   _clocksPerFrame += (VBlankLines * ClocksPerScanline);
@@ -116,6 +117,50 @@ void Manager::RemoveRegBreak(const std::string& regValue) {
   } else {
     throw std::invalid_argument("Unknown reg type");
   }
+}
+
+input::State Manager::GetInput() const {
+  return _state;
+}
+
+void Manager::UpdateInput(input::State state) {
+  if (_state != state) {
+    _state = state;
+    spdlog::get("console")->debug("Input State: {}", _state);
+  }
+
+  // calculate the value of FF00
+  // single byte:
+  // 10001000 = A
+  // 01001000 = B
+  // 00101000 = select
+  // 00011000 = Start
+  // 10000100 = Right
+  // 01000100 = Left
+  // 00100100 = Up
+  // 00010100 = Down
+
+  // Direction inputs are inversed though, so the final valeus are
+  // 10001000 = A       = 0x88
+  // 01001000 = B       = 0x48
+  // 00101000 = select  = 0x28
+  // 00011000 = Start   = 0x18
+  // 01110100 = Right   = 0x74
+  // 10110100 = Left    = 0xB4
+  // 11010100 = Up      = 0xD4
+  // 11100100 = Down    = 0xE4
+
+  unsigned char value = 0;
+  value |= (state & input::button::A ? 0x88 : 0x00);
+  value |= (state & input::button::B ? 0x48 : 0x00);
+  value |= (state & input::button::Select ? 0x28 : 0x00);
+  value |= (state & input::button::Start ? 0x18 : 0x00);
+  value |= (state & input::button::Right ? 0x74 : 0x00);
+  value |= (state & input::button::Left ? 0xB4 : 0x00);
+  value |= (state & input::button::Up ? 0xD4 : 0x00);
+  value |= (state & input::button::Down ? 0xE4 : 0x00);
+
+  _memoryController->WriteByte(0xFF00, value);
 }
 
 }  // namespace cpu
